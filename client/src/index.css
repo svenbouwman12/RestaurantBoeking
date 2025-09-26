@@ -1392,6 +1392,10 @@ p {
   padding-bottom: 1rem;
 }
 
+.tab-content {
+  margin-top: 1rem;
+}
+
 .tab-btn {
   display: flex;
   align-items: center;

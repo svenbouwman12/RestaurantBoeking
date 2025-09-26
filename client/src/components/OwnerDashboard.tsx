@@ -285,15 +285,6 @@ const OwnerDashboard: React.FC = () => {
     );
   }
 
-  // Show specific management views
-  if (currentTab === 'menu') {
-    return <MenuManagement onBack={() => setCurrentTab('dashboard')} />;
-  }
-
-  if (currentTab === 'tables') {
-    return <TableManagement onBack={() => setCurrentTab('dashboard')} />;
-  }
-
   return (
     <div className="container">
       <div className="card">
@@ -332,28 +323,34 @@ const OwnerDashboard: React.FC = () => {
             </button>
           </div>
           
-          <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap', marginTop: '1rem' }}>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="form-input"
-              style={{ width: 'auto', minWidth: '200px' }}
-            />
-            <button
-              className="btn btn-primary"
-              onClick={() => setShowReservationModal(true)}
-            >
-              <Plus size={20} style={{ marginRight: '8px' }} />
-              Reservering Toevoegen
-            </button>
-          </div>
+          {/* Dashboard Controls - Only show on dashboard tab */}
+          {currentTab === 'dashboard' && (
+            <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap', marginTop: '1rem' }}>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="form-input"
+                style={{ width: 'auto', minWidth: '200px' }}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowReservationModal(true)}
+              >
+                <Plus size={20} style={{ marginRight: '8px' }} />
+                Reservering Toevoegen
+              </button>
+            </div>
+          )}
         </div>
 
         {error && <div className="error">{error}</div>}
 
-        {/* Filters */}
-        <div className="grid grid-2 mb-20">
+        {/* Tab Content */}
+        {currentTab === 'dashboard' && (
+          <>
+            {/* Filters */}
+            <div className="grid grid-2 mb-20">
           <div className="form-group">
             <label className="form-label">
               <Search size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
@@ -598,7 +595,22 @@ const OwnerDashboard: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+          </>
+        )}
+
+        {/* Menu Management Tab */}
+        {currentTab === 'menu' && (
+          <div className="tab-content">
+            <MenuManagement onBack={() => setCurrentTab('dashboard')} />
+          </div>
+        )}
+
+        {/* Table Management Tab */}
+        {currentTab === 'tables' && (
+          <div className="tab-content">
+            <TableManagement onBack={() => setCurrentTab('dashboard')} />
+          </div>
+        )}
 
         {/* Create Reservation Modal */}
         {showReservationModal && (
