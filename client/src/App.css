@@ -7,7 +7,7 @@
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: var(--primary-color);
   color: white;
   padding: 6rem 0 4rem;
   position: relative;
@@ -88,7 +88,6 @@
 .nav-logo {
   height: 40px;
   width: auto;
-  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(96%) contrast(97%);
 }
 
 .nav-title {
@@ -137,14 +136,12 @@
 }
 
 .nav-link.active {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  background: var(--primary-color);
   color: white;
-  box-shadow: var(--shadow-md);
 }
 
 .nav-link.active:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  background: var(--primary-dark);
 }
 
 /* Main Content */
