@@ -34,6 +34,25 @@ function App() {
           </div>
         </nav>
 
+        {currentView === 'customer' && (
+          <section className="hero">
+            <div className="container">
+              <div className="hero-content fade-in">
+                <h1>Reserveer Je Tafel</h1>
+                <p>Ervaar culinaire perfectie in een sfeervolle omgeving. Reserveer nu je tafel en laat je verwennen door onze chef-kok.</p>
+                <div className="hero-cta">
+                  <button className="btn btn-lg" style={{ background: 'white', color: 'var(--primary-color)' }}>
+                    Direct Reserveren
+                  </button>
+                  <button className="btn btn-lg btn-secondary" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '2px solid rgba(255,255,255,0.3)' }}>
+                    Bekijk Menu
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <main className="main-content">
           <Routes>
             <Route path="/" element={<CustomerReservation />} />

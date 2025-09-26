@@ -134,13 +134,13 @@ const CustomerReservation: React.FC = () => {
 
   if (success) {
     return (
-      <div className="container">
-        <div className="card text-center">
-          <CheckCircle size={64} className="text-success" style={{ margin: '0 auto 20px' }} />
+      <div className="container-narrow">
+        <div className="card text-center fade-in">
+          <CheckCircle size={80} className="text-success" style={{ margin: '0 auto 2rem' }} />
           <h2 className="card-title text-success">Reservering Bevestigd!</h2>
-          <p>Bedankt voor je reservering. We kijken ernaar uit om je te verwelkomen!</p>
+          <p className="text-lg">Bedankt voor je reservering. We kijken ernaar uit om je te verwelkomen!</p>
           <button 
-            className="btn btn-primary"
+            className="btn btn-primary btn-lg mt-6"
             onClick={() => setSuccess(false)}
           >
             Nieuwe Reservering Maken
@@ -151,11 +151,11 @@ const CustomerReservation: React.FC = () => {
   }
 
   return (
-    <div className="container">
-      <div className="card">
+    <div className="container-narrow">
+      <div className="card fade-in">
         <div className="card-header">
-          <h1 className="card-title">Maak een Reservering</h1>
-          <p className="text-muted">Reserveer je tafel bij ons restaurant</p>
+          <h2 className="card-title">Maak een Reservering</h2>
+          <p className="text-muted">Reserveer je tafel bij ons restaurant en ervaar culinaire perfectie</p>
         </div>
 
         {error && <div className="error">{error}</div>}
@@ -304,12 +304,11 @@ const CustomerReservation: React.FC = () => {
             />
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-8">
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary btn-lg"
               disabled={submitting || !formData.table_id || !formData.customer_name}
-              style={{ fontSize: '18px', padding: '15px 30px' }}
             >
               {submitting ? 'Reservering aanmaken...' : 'Reservering Maken'}
             </button>

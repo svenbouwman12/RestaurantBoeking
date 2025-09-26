@@ -231,16 +231,16 @@ const OwnerDashboard: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="card">
+      <div className="card fade-in">
         <div className="card-header">
           <h1 className="card-title">Eigenaar Dashboard</h1>
-          <div className="flex gap-2">
+          <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               className="form-input"
-              style={{ width: 'auto' }}
+              style={{ width: 'auto', minWidth: '200px' }}
             />
             <button 
               className="btn btn-primary"
