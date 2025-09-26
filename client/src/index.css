@@ -5,11 +5,22 @@
 }
 
 :root {
-  --primary-color: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #3b82f6;
-  --accent-color: #f59e0b;
-  --accent-dark: #d97706;
+  /* Primary Colors - Warm Gold */
+  --primary-color: #E5AD43;
+  --primary-dark: #d19e3a;
+  --primary-light: #f7e6c7;
+  
+  /* Secondary Colors - Teal Accent */
+  --secondary-color: #22BEBE;
+  --secondary-dark: #1ea5a5;
+  --secondary-light: #d1f2f2;
+  
+  /* Background Colors - Warm Cream */
+  --background-color: #FAF5E8;
+  --background-secondary: #f5f0e1;
+  --background-tertiary: #f0ead6;
+  
+  /* Neutral Colors */
   --neutral-50: #fafafa;
   --neutral-100: #f5f5f5;
   --neutral-200: #e5e5e5;
@@ -20,9 +31,18 @@
   --neutral-700: #404040;
   --neutral-800: #262626;
   --neutral-900: #171717;
+  
+  /* Accent Colors */
+  --accent-color: #22BEBE;
+  --accent-dark: #1ea5a5;
+  --accent-light: #d1f2f2;
+  
+  /* Status Colors */
   --success-color: #10b981;
   --warning-color: #f59e0b;
   --error-color: #ef4444;
+  
+  /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -38,7 +58,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  background: var(--background-color);
   color: var(--neutral-800);
   line-height: 1.6;
   font-size: 16px;
