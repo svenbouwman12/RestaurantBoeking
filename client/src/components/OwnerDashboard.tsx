@@ -20,6 +20,7 @@ import { format, parseISO } from 'date-fns';
 import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
 import TableManagement from './TableManagement';
+import Settings from './Settings';
 
 interface Table {
   id: string;
@@ -315,8 +316,8 @@ const OwnerDashboard: React.FC = () => {
               Tafel Beheer
             </button>
             <button
-              className="tab-btn"
-              onClick={() => navigate('/settings')}
+              className={`tab-btn ${currentTab === 'settings' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('settings')}
             >
               <Settings size={16} style={{ marginRight: '8px' }} />
               Instellingen
@@ -609,6 +610,13 @@ const OwnerDashboard: React.FC = () => {
         {currentTab === 'tables' && (
           <div className="tab-content">
             <TableManagement onBack={() => setCurrentTab('dashboard')} />
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {currentTab === 'settings' && (
+          <div className="tab-content">
+            <Settings onBack={() => setCurrentTab('dashboard')} />
           </div>
         )}
 
