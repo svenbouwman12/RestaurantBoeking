@@ -12,7 +12,6 @@ import {
   Mail,
   MessageSquare
 } from 'lucide-react';
-import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 import { supabase } from '../lib/supabase';
 

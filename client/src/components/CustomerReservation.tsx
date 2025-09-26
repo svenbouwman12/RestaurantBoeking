@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
-import axios from 'axios';
 import { supabase } from '../lib/supabase';
 
 interface Table {
@@ -79,7 +78,7 @@ const CustomerReservation: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, selectedTime]);
+  }, [selectedDate]);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
