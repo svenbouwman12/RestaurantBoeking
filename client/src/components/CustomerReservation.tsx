@@ -40,7 +40,7 @@ const CustomerReservation: React.FC = () => {
     customer_name: '',
     customer_email: '',
     customer_phone: '',
-    guests: 2,
+    guests: 0,
     date: '',
     time: '',
     notes: ''
@@ -246,12 +246,10 @@ const CustomerReservation: React.FC = () => {
       ...prev,
       guests: guests
     }));
-    setCurrentStep('date');
   };
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
-    setCurrentStep('time');
   };
 
   const handleTimeChange = (time: string) => {
@@ -260,7 +258,6 @@ const CustomerReservation: React.FC = () => {
       ...prev,
       time: time
     }));
-    setCurrentStep('details');
   };
 
 
@@ -306,7 +303,7 @@ const CustomerReservation: React.FC = () => {
         customer_name: '',
         customer_email: '',
         customer_phone: '',
-        guests: 2,
+        guests: 0,
         date: '',
         time: '',
         notes: ''
@@ -403,6 +400,16 @@ const CustomerReservation: React.FC = () => {
                   </button>
                 ))}
               </div>
+              <div className="flex" style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setCurrentStep('date')}
+                  disabled={!formData.guests || formData.guests === 0}
+                >
+                  Volgende →
+                </button>
+              </div>
             </div>
           )}
 
@@ -459,6 +466,16 @@ const CustomerReservation: React.FC = () => {
                   </button>
                 </div>
               </div>
+              <div className="flex" style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setCurrentStep('time')}
+                  disabled={!selectedDate}
+                >
+                  Volgende →
+                </button>
+              </div>
             </div>
           )}
 
@@ -510,6 +527,16 @@ const CustomerReservation: React.FC = () => {
                     );
                   })}
                 </div>
+              </div>
+              <div className="flex" style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setCurrentStep('details')}
+                  disabled={!selectedTime}
+                >
+                  Volgende →
+                </button>
               </div>
             </div>
           )}
