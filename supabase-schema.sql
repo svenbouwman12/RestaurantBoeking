@@ -45,11 +45,38 @@ CREATE TABLE orders (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Restaurant settings table
+CREATE TABLE restaurant_settings (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    setting_key VARCHAR(50) UNIQUE NOT NULL,
+    setting_value TEXT NOT NULL,
+    setting_type VARCHAR(20) DEFAULT 'string' CHECK (setting_type IN ('string', 'number', 'boolean', 'json')),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert default settings
+INSERT INTO restaurant_settings (setting_key, setting_value, setting_type, description) VALUES
+('restaurant_name', 'Zaytun Restaurant', 'string', 'Naam van het restaurant'),
+('opening_hours_monday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden maandag'),
+('opening_hours_tuesday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden dinsdag'),
+('opening_hours_wednesday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden woensdag'),
+('opening_hours_thursday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden donderdag'),
+('opening_hours_friday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden vrijdag'),
+('opening_hours_saturday', '{"open": "17:00", "close": "23:00", "closed": false}', 'json', 'Openingstijden zaterdag'),
+('opening_hours_sunday', '{"open": "17:00", "close": "23:00", "closed": true}', 'json', 'Openingstijden zondag'),
+('default_reservation_duration', '2', 'number', 'Standaard reserveringsduur in uren'),
+('default_buffer_minutes', '15', 'number', 'Standaard bufferperiode in minuten'),
+('max_advance_booking_days', '30', 'number', 'Maximaal aantal dagen vooruit reserveren'),
+('min_advance_booking_hours', '2', 'number', 'Minimaal aantal uren vooruit reserveren');
+
 -- Create indexes for better performance
 CREATE INDEX idx_reservations_date ON reservations(date);
 CREATE INDEX idx_reservations_table_id ON reservations(table_id);
 CREATE INDEX idx_reservations_status ON reservations(status);
 CREATE INDEX idx_orders_reservation_id ON orders(reservation_id);
+CREATE INDEX idx_restaurant_settings_key ON restaurant_settings(setting_key);
 CREATE INDEX idx_orders_status ON orders(status);
 
 -- Create updated_at trigger function
