@@ -795,6 +795,7 @@ const OwnerDashboard: React.FC = () => {
         </div>
       )}
 
+      </div>
     </div>
   );
 };
