@@ -283,6 +283,9 @@ p {
 /* Date and Time Selectors */
 .date-selector, .time-selector {
   margin-top: 1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .date-navigation {
@@ -414,9 +417,13 @@ p {
 }
 
 .time-card {
-  min-width: 70px;
+  min-width: 0;
   font-weight: 600;
-  flex: 0 0 auto;
+  flex: 1;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .card-header {
