@@ -23,13 +23,6 @@ function App() {
               </div>
               <div className="nav-links">
                 <Link 
-                  to="/" 
-                  className={`nav-link ${currentView === 'customer' ? 'active' : ''}`}
-                  onClick={() => setCurrentView('customer')}
-                >
-                  Reservering Maken
-                </Link>
-                <Link 
                   to="/owner" 
                   className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
                   onClick={() => setCurrentView('owner')}
@@ -48,7 +41,16 @@ function App() {
                 <h1>Reserveer Je Tafel</h1>
                 <p>Ervaar culinaire perfectie in een sfeervolle omgeving. Reserveer nu je tafel en laat je verwennen door onze chef-kok.</p>
                 <div className="hero-cta">
-                  <button className="btn btn-lg" style={{ background: 'white', color: 'var(--primary-color)' }}>
+                  <button 
+                    className="btn btn-lg" 
+                    style={{ background: 'white', color: 'var(--primary-color)' }}
+                    onClick={() => {
+                      const reservationSection = document.getElementById('reservation-section');
+                      if (reservationSection) {
+                        reservationSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
                     Direct Reserveren
                   </button>
                   <button className="btn btn-lg btn-secondary" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '2px solid rgba(255,255,255,0.3)' }}>

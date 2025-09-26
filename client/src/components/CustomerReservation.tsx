@@ -212,7 +212,7 @@ const CustomerReservation: React.FC = () => {
   }
 
   return (
-    <div className="container-narrow">
+    <div id="reservation-section" className="container-narrow">
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">Maak een Reservering</h2>
