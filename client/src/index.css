@@ -1346,8 +1346,11 @@ p {
 .guests-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin: 0.5rem 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .guest-btn {
@@ -1543,7 +1546,8 @@ p {
   
   .guests-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.25rem;
+    gap: 0.15rem;
+    max-width: 300px;
   }
   
   .guest-btn {
