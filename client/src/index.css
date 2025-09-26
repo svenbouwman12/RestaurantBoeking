@@ -419,11 +419,12 @@ p {
 }
 
 .time-card {
-  min-width: 60px;
+  min-width: 70px;
   font-weight: 600;
   flex: 0 0 auto;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
   white-space: nowrap;
+  text-align: center;
 }
 
 .card-header {
