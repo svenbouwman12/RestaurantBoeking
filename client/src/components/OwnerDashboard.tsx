@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Calendar, 
   Clock, 
   Users, 
   Eye, 
-  Edit, 
   Trash2, 
   Plus, 
   Filter,
@@ -84,11 +83,7 @@ const OwnerDashboard: React.FC = () => {
     price: 0
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedDate]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [tablesRes, reservationsRes] = await Promise.all([
@@ -104,7 +99,11 @@ const OwnerDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedDate]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const fetchOrders = async (reservationId: string) => {
     try {

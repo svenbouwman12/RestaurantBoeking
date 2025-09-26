@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
@@ -22,7 +22,6 @@ interface ReservationData {
 }
 
 const CustomerReservation: React.FC = () => {
-  const [tables, setTables] = useState<Table[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('19:00');
   const [availableTables, setAvailableTables] = useState<Table[]>([]);
@@ -47,26 +46,7 @@ const CustomerReservation: React.FC = () => {
     '20:00', '20:30', '21:00', '21:30', '22:00'
   ];
 
-  useEffect(() => {
-    fetchTables();
-  }, []);
-
-  useEffect(() => {
-    if (selectedDate && selectedTime) {
-      checkAvailability();
-    }
-  }, [selectedDate, selectedTime]);
-
-  const fetchTables = async () => {
-    try {
-      const response = await axios.get('/api/tables');
-      setTables(response.data);
-    } catch (error) {
-      console.error('Error fetching tables:', error);
-    }
-  };
-
-  const checkAvailability = async () => {
+  const checkAvailability = useCallback(async () => {
     setLoading(true);
     try {
       const dateStr = selectedDate.toISOString().split('T')[0];
@@ -80,7 +60,13 @@ const CustomerReservation: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedDate, selectedTime]);
+
+  useEffect(() => {
+    if (selectedDate && selectedTime) {
+      checkAvailability();
+    }
+  }, [selectedDate, selectedTime, checkAvailability]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
