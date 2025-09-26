@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -48,7 +46,7 @@ const CustomerReservation: React.FC = () => {
   ];
 
   // Generate available dates (next 7 days)
-  const generateAvailableDates = () => {
+  const generateAvailableDates = useCallback(() => {
     const dates = [];
     const today = new Date();
     for (let i = 0; i < 7; i++) {
@@ -57,7 +55,7 @@ const CustomerReservation: React.FC = () => {
       dates.push(date);
     }
     setAvailableDates(dates);
-  };
+  }, []);
 
   const checkAvailability = useCallback(async () => {
     setLoading(true);
@@ -105,7 +103,7 @@ const CustomerReservation: React.FC = () => {
 
   useEffect(() => {
     generateAvailableDates();
-  }, []);
+  }, [generateAvailableDates]);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
@@ -121,15 +119,6 @@ const CustomerReservation: React.FC = () => {
     }));
   };
 
-  const handleDateChange = (date: Date | null) => {
-    if (date) {
-      setSelectedDate(date);
-      setFormData((prev: ReservationData) => ({
-        ...prev,
-        date: date.toISOString().split('T')[0]
-      }));
-    }
-  };
 
   const handleTimeChange = (time: string) => {
     setSelectedTime(time);
@@ -247,7 +236,7 @@ const CustomerReservation: React.FC = () => {
             </label>
             <div className="date-selector">
               <div className="date-cards">
-                {availableDates.slice(0, 3).map((date, index) => {
+                {availableDates.slice(0, 3).map((date: Date, index: number) => {
                   const isToday = date.toDateString() === new Date().toDateString();
                   const isSelected = date.toDateString() === selectedDate.toDateString();
                   const isPast = date < new Date();
