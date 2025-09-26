@@ -12,7 +12,7 @@ import {
   Phone,
   Mail,
   MessageSquare,
-  Settings,
+  Settings as SettingsIcon,
   Utensils,
   Building
 } from 'lucide-react';
@@ -319,7 +319,7 @@ const OwnerDashboard: React.FC = () => {
               className={`tab-btn ${currentTab === 'settings' ? 'active' : ''}`}
               onClick={() => setCurrentTab('settings')}
             >
-              <Settings size={16} style={{ marginRight: '8px' }} />
+              <SettingsIcon size={16} style={{ marginRight: '8px' }} />
               Instellingen
             </button>
           </div>

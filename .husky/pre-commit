@@ -1,15 +1,14 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Check for syntax errors before commit
-echo "🔍 Checking for syntax errors..."
+# Check for duplicate declarations and syntax errors
+echo "🔍 Checking for duplicate declarations and syntax errors..."
 
-# Check TypeScript compilation
-cd client
-if ! npm run build > /dev/null 2>&1; then
-  echo "❌ Build failed! Please fix syntax errors before committing."
-  echo "Run 'npm run build' to see detailed errors."
+# Run the fix-duplicates script
+if ! ./fix-duplicates.sh; then
+  echo "❌ Duplicate declarations or build errors detected!"
+  echo "Please fix the issues before committing."
   exit 1
 fi
 
-echo "✅ Build successful! Proceeding with commit."
+echo "✅ All checks passed! Proceeding with commit."
