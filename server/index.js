@@ -154,6 +154,24 @@ app.get('/api/tables/:tableId/reservations', async (req, res) => {
   }
 });
 
+// Configuration for reservation duration and buffer
+const RESERVATION_DURATION_HOURS = 2; // Standard reservation duration
+const BUFFER_MINUTES = 15; // Buffer time before and after reservation
+
+// Helper function to check time overlap
+function hasTimeOverlap(startTime1, endTime1, startTime2, endTime2) {
+  return startTime1 < endTime2 && startTime2 < endTime1;
+}
+
+// Helper function to add minutes to time string
+function addMinutesToTime(timeStr, minutes) {
+  const [hours, mins] = timeStr.split(':').map(Number);
+  const totalMinutes = hours * 60 + mins + minutes;
+  const newHours = Math.floor(totalMinutes / 60);
+  const newMins = totalMinutes % 60;
+  return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
+}
+
 // Create a new reservation
 app.post('/api/reservations', async (req, res) => {
   try {
@@ -164,19 +182,36 @@ app.post('/api/reservations', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
-    // Check if table is available at the requested time
+    // Calculate reservation time slots with buffer
+    const bufferStartTime = addMinutesToTime(time, -BUFFER_MINUTES);
+    const reservationEndTime = addMinutesToTime(time, RESERVATION_DURATION_HOURS * 60);
+    const bufferEndTime = addMinutesToTime(reservationEndTime, BUFFER_MINUTES);
+    
+    // Check if table is available at the requested time (with overlap check)
     const { data: existingReservations, error: checkError } = await supabase
       .from('reservations')
-      .select('*')
+      .select('time, status, duration_hours, buffer_minutes')
       .eq('table_id', table_id)
       .eq('date', date)
-      .eq('status', 'confirmed')
-      .or('status.eq.arrived,status.eq.in_progress');
+      .in('status', ['confirmed', 'arrived', 'in_progress']);
     
     if (checkError) throw checkError;
     
-    if (existingReservations && existingReservations.length > 0) {
-      return res.status(400).json({ error: 'Table is not available at the requested time' });
+    // Check for time overlaps
+    for (const existingReservation of existingReservations) {
+      const existingTime = existingReservation.time;
+      const existingDuration = existingReservation.duration_hours || RESERVATION_DURATION_HOURS;
+      const existingBuffer = existingReservation.buffer_minutes || BUFFER_MINUTES;
+      
+      const existingBufferStart = addMinutesToTime(existingTime, -existingBuffer);
+      const existingReservationEnd = addMinutesToTime(existingTime, existingDuration * 60);
+      const existingBufferEnd = addMinutesToTime(existingReservationEnd, existingBuffer);
+      
+      if (hasTimeOverlap(bufferStartTime, bufferEndTime, existingBufferStart, existingBufferEnd)) {
+        return res.status(400).json({ 
+          error: `Tafel is niet beschikbaar van ${bufferStartTime} tot ${bufferEndTime}. Er is al een reservering van ${existingTime} tot ${existingReservationEnd}.` 
+        });
+      }
     }
     
     // Create reservation
@@ -190,6 +225,8 @@ app.post('/api/reservations', async (req, res) => {
         guests,
         date,
         time,
+        duration_hours: RESERVATION_DURATION_HOURS,
+        buffer_minutes: BUFFER_MINUTES,
         notes,
         status: 'confirmed'
       }])
@@ -383,18 +420,41 @@ app.get('/api/tables/available', async (req, res) => {
     
     if (tablesError) throw tablesError;
     
-    // Get occupied tables at the specified time
-    const { data: occupiedReservations, error: reservationsError } = await supabase
+    // Calculate time slots with buffer for overlap check
+    const bufferStartTime = addMinutesToTime(time, -BUFFER_MINUTES);
+    const reservationEndTime = addMinutesToTime(time, RESERVATION_DURATION_HOURS * 60);
+    const bufferEndTime = addMinutesToTime(reservationEndTime, BUFFER_MINUTES);
+    
+    // Get all reservations for the date
+    const { data: allReservations, error: reservationsError } = await supabase
       .from('reservations')
-      .select('table_id')
+      .select('table_id, time, status, duration_hours, buffer_minutes')
       .eq('date', date)
-      .eq('status', 'confirmed')
-      .or('status.eq.arrived,status.eq.in_progress');
+      .in('status', ['confirmed', 'arrived', 'in_progress']);
     
     if (reservationsError) throw reservationsError;
     
-    const occupiedTableIds = occupiedReservations.map(r => r.table_id);
-    const availableTables = allTables.filter(table => !occupiedTableIds.includes(table.id));
+    // Check each table for availability
+    const availableTables = allTables.filter(table => {
+      const tableReservations = allReservations.filter(r => r.table_id === table.id);
+      
+      // Check if any reservation overlaps with the requested time
+      for (const reservation of tableReservations) {
+        const existingTime = reservation.time;
+        const existingDuration = reservation.duration_hours || RESERVATION_DURATION_HOURS;
+        const existingBuffer = reservation.buffer_minutes || BUFFER_MINUTES;
+        
+        const existingBufferStart = addMinutesToTime(existingTime, -existingBuffer);
+        const existingReservationEnd = addMinutesToTime(existingTime, existingDuration * 60);
+        const existingBufferEnd = addMinutesToTime(existingReservationEnd, existingBuffer);
+        
+        if (hasTimeOverlap(bufferStartTime, bufferEndTime, existingBufferStart, existingBufferEnd)) {
+          return false; // Table is not available
+        }
+      }
+      
+      return true; // Table is available
+    });
     
     res.json(availableTables);
   } catch (error) {

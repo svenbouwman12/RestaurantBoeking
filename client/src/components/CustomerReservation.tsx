@@ -58,6 +58,24 @@ const CustomerReservation: React.FC = () => {
     setAvailableDates(dates);
   }, []);
 
+  // Configuration for reservation duration and buffer
+  const RESERVATION_DURATION_HOURS = 2; // Standard reservation duration
+  const BUFFER_MINUTES = 15; // Buffer time before and after reservation
+
+  // Helper function to check time overlap
+  const hasTimeOverlap = (startTime1: string, endTime1: string, startTime2: string, endTime2: string): boolean => {
+    return startTime1 < endTime2 && startTime2 < endTime1;
+  };
+
+  // Helper function to add minutes to time string
+  const addMinutesToTime = (timeStr: string, minutes: number): string => {
+    const [hours, mins] = timeStr.split(':').map(Number);
+    const totalMinutes = hours * 60 + mins + minutes;
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMins = totalMinutes % 60;
+    return `${newHours.toString().padStart(2, '0')}:${newMins.toString().padStart(2, '0')}`;
+  };
+
   const checkAvailability = useCallback(async () => {
     setLoading(true);
     try {
@@ -70,18 +88,41 @@ const CustomerReservation: React.FC = () => {
       
       if (tablesError) throw tablesError;
       
-      // Get occupied reservations for the selected date and time
-      const { data: occupiedReservations, error: reservationsError } = await supabase
+      // Calculate time slots with buffer for overlap check
+      const bufferStartTime = addMinutesToTime(selectedTime, -BUFFER_MINUTES);
+      const reservationEndTime = addMinutesToTime(selectedTime, RESERVATION_DURATION_HOURS * 60);
+      const bufferEndTime = addMinutesToTime(reservationEndTime, BUFFER_MINUTES);
+      
+      // Get all reservations for the date
+      const { data: allReservations, error: reservationsError } = await supabase
         .from('reservations')
-        .select('table_id')
+        .select('table_id, time, status, duration_hours, buffer_minutes')
         .eq('date', dateStr)
-        .eq('status', 'confirmed')
-        .or('status.eq.arrived,status.eq.in_progress');
+        .in('status', ['confirmed', 'arrived', 'in_progress']);
       
       if (reservationsError) throw reservationsError;
       
-      const occupiedTableIds = occupiedReservations.map((r: any) => r.table_id);
-      const availableTables = allTables.filter((table: Table) => !occupiedTableIds.includes(table.id));
+      // Check each table for availability
+      const availableTables = allTables.filter((table: Table) => {
+        const tableReservations = allReservations.filter((r: any) => r.table_id === table.id);
+        
+        // Check if any reservation overlaps with the requested time
+        for (const reservation of tableReservations) {
+          const existingTime = reservation.time;
+          const existingDuration = reservation.duration_hours || RESERVATION_DURATION_HOURS;
+          const existingBuffer = reservation.buffer_minutes || BUFFER_MINUTES;
+          
+          const existingBufferStart = addMinutesToTime(existingTime, -existingBuffer);
+          const existingReservationEnd = addMinutesToTime(existingTime, existingDuration * 60);
+          const existingBufferEnd = addMinutesToTime(existingReservationEnd, existingBuffer);
+          
+          if (hasTimeOverlap(bufferStartTime, bufferEndTime, existingBufferStart, existingBufferEnd)) {
+            return false; // Table is not available
+          }
+        }
+        
+        return true; // Table is available
+      });
       
       // Find the best table for the number of guests
       const suitableTables = availableTables.filter((table: Table) => table.seats >= formData.guests);
@@ -100,7 +141,7 @@ const CustomerReservation: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedDate, formData.guests]);
+  }, [selectedDate, selectedTime, formData.guests]);
 
   useEffect(() => {
     generateAvailableDates();

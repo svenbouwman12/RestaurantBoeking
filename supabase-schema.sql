@@ -24,6 +24,8 @@ CREATE TABLE reservations (
     guests INTEGER NOT NULL CHECK (guests > 0),
     date DATE NOT NULL,
     time TIME NOT NULL,
+    duration_hours INTEGER DEFAULT 2 CHECK (duration_hours > 0),
+    buffer_minutes INTEGER DEFAULT 15 CHECK (buffer_minutes >= 0),
     status VARCHAR(20) DEFAULT 'confirmed' CHECK (status IN ('pending', 'confirmed', 'arrived', 'in_progress', 'completed', 'cancelled')),
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
