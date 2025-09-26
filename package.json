@@ -2,7 +2,7 @@
   "name": "tafel-reserveren",
   "version": "1.0.0",
   "description": "Table reservation system for restaurants",
-  "main": "server/index.js",
+  "main": "client/build/index.html",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server/index.js",
