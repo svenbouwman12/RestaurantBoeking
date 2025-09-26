@@ -70,7 +70,6 @@ const OwnerDashboard: React.FC = () => {
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
-  const [showOrderModal, setShowOrderModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -90,13 +89,7 @@ const OwnerDashboard: React.FC = () => {
     notes: ''
   });
 
-  // New order form
-  const [newOrder, setNewOrder] = useState({
-    item_name: '',
-    item_type: 'food',
-    quantity: 1,
-    price: 0
-  });
+  // Order creation is now handled in the Phone Orders tab
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -242,32 +235,7 @@ const OwnerDashboard: React.FC = () => {
     }
   };
 
-  const handleCreateOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedReservation) return;
-    
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .insert([{
-          ...newOrder,
-          reservation_id: selectedReservation.id
-        }]);
-      
-      if (error) throw error;
-      
-      setShowOrderModal(false);
-      setNewOrder({
-        item_name: '',
-        item_type: 'food',
-        quantity: 1,
-        price: 0
-      });
-      await fetchOrders(selectedReservation.id);
-    } catch (error) {
-      console.error('Error creating order:', error);
-    }
-  };
+  // Order creation is now handled in the Phone Orders tab
 
   const handleDeleteReservation = async (reservationId: string) => {
     if (!window.confirm('Are you sure you want to delete this reservation?')) return;
@@ -534,13 +502,7 @@ const OwnerDashboard: React.FC = () => {
                 <div className="orders-section">
                   <div className="flex justify-between align-center">
                     <h4>Bestellingen</h4>
-                    <button 
-                      className="btn btn-primary btn-sm"
-                      onClick={() => setShowOrderModal(true)}
-                    >
-                      <Plus size={16} style={{ marginRight: '4px' }} />
-                      Bestelling Toevoegen
-                    </button>
+                    <p className="text-muted">Gebruik de "Telefoon Bestellingen" tab om bestellingen toe te voegen</p>
                   </div>
                   
                   {orders.length === 0 ? (
@@ -550,12 +512,12 @@ const OwnerDashboard: React.FC = () => {
                       {orders.map(order => (
                         <div key={order.id} className="order-item">
                           <div>
-                            <strong>{order.item_name}</strong>
-                            <span className="text-muted"> ({order.item_type === 'food' ? 'eten' : order.item_type === 'drink' ? 'drank' : 'dessert'})</span>
+                            <strong>Order #{order.id.slice(-6)}</strong>
+                            <span className="text-muted"> - €{order.total_amount.toFixed(2)}</span>
                           </div>
                           <div>
-                            <span>Aantal: {order.quantity}</span>
-                            <span className="text-muted"> | €{order.price.toFixed(2)}</span>
+                            <span>{order.items.length} item{order.items.length > 1 ? 's' : ''}</span>
+                            <span className="text-muted"> | Status: {order.status}</span>
                             <span className={`status-badge status-${order.status}`}>
                               {order.status === 'pending' ? 'in behandeling' :
                                order.status === 'preparing' ? 'wordt bereid' :
@@ -830,74 +792,7 @@ const OwnerDashboard: React.FC = () => {
         </div>
       )}
 
-        {/* Create Order Modal */}
-        {showOrderModal && selectedReservation && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3>Bestelling Toevoegen voor {selectedReservation.customer_name}</h3>
-            <form onSubmit={handleCreateOrder}>
-              <div className="form-group">
-                <label className="form-label">Item Naam</label>
-                <input
-                  type="text"
-                  value={newOrder.item_name}
-                  onChange={(e) => setNewOrder(prev => ({ ...prev, item_name: e.target.value }))}
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-2">
-                <div className="form-group">
-                  <label className="form-label">Item Type</label>
-                  <select
-                    value={newOrder.item_type}
-                    onChange={(e) => setNewOrder(prev => ({ ...prev, item_type: e.target.value }))}
-                    className="form-input"
-                  >
-                    <option value="food">Eten</option>
-                    <option value="drink">Drank</option>
-                    <option value="dessert">Dessert</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Aantal</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={newOrder.quantity}
-                    onChange={(e) => setNewOrder(prev => ({ ...prev, quantity: parseInt(e.target.value) }))}
-                    className="form-input"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Prijs</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={newOrder.price}
-                  onChange={(e) => setNewOrder(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
-                  className="form-input"
-                  required
-                />
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowOrderModal(false)}>
-                  Annuleren
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Bestelling Toevoegen
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+        {/* Note: Order creation is now handled in the Phone Orders tab */}
 
       </div>
     </div>
