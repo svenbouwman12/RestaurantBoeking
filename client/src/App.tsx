@@ -72,12 +72,14 @@ function App() {
         )}
 
         <main className="main-content">
-                <Routes>
-                  <Route path="/" element={<CustomerReservation />} />
-                  <Route path="/menu" element={<Menu />} />
-                  <Route path="/owner" element={<OwnerDashboard />} />
-                  <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
-                </Routes>
+          <Routes>
+            <Route path="/" element={<CustomerReservation />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/owner" element={<OwnerDashboard />} />
+            <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
+            {/* Fallback route */}
+            <Route path="*" element={<CustomerReservation />} />
+          </Routes>
         </main>
 
         <footer className="footer">
