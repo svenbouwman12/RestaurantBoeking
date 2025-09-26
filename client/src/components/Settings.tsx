@@ -11,9 +11,11 @@ import {
   Edit,
   Trash2,
   Check,
-  X
+  X,
+  Utensils
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import MenuManagement from './MenuManagement';
 
 interface RestaurantSetting {
   id: string;
@@ -45,6 +47,7 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
+  const [currentView, setCurrentView] = useState<'settings' | 'menu'>('settings');
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
@@ -260,6 +263,11 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
     sunday: 'Zondag'
   };
 
+  // Show menu management if selected
+  if (currentView === 'menu') {
+    return <MenuManagement onBack={() => setCurrentView('settings')} />;
+  }
+
   return (
     <div className="container">
       <div className="card">
@@ -446,23 +454,48 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Table Management */}
-          <div className="card mb-20">
-            <div className="card-header">
-              <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                <h3 className="card-title">
-                  <Users size={20} style={{ marginRight: '8px' }} />
-                  Tafel Beheer
-                </h3>
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => setShowAddTable(true)}
-                >
-                  <Plus size={16} style={{ marginRight: '8px' }} />
-                  Tafel Toevoegen
-                </button>
-              </div>
-            </div>
+                 {/* Menu Management */}
+                 <div className="card mb-20">
+                   <div className="card-header">
+                     <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                       <h3 className="card-title">
+                         <Utensils size={20} style={{ marginRight: '8px' }} />
+                         Menu Beheer
+                       </h3>
+                       <button
+                         className="btn btn-primary"
+                         onClick={() => setCurrentView('menu')}
+                       >
+                         <Utensils size={16} style={{ marginRight: '8px' }} />
+                         Menu Items Beheren
+                       </button>
+                     </div>
+                   </div>
+                   <div className="card-body">
+                     <p className="text-muted">
+                       Beheer je menu items, prijzen, allergenen en beschikbaarheid. 
+                       Voeg nieuwe gerechten toe, pas bestaande aan of verwijder items.
+                     </p>
+                   </div>
+                 </div>
+
+                 {/* Table Management */}
+                 <div className="card mb-20">
+                   <div className="card-header">
+                     <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                       <h3 className="card-title">
+                         <Users size={20} style={{ marginRight: '8px' }} />
+                         Tafel Beheer
+                       </h3>
+                       <button
+                         className="btn btn-primary"
+                         onClick={() => setShowAddTable(true)}
+                       >
+                         <Plus size={16} style={{ marginRight: '8px' }} />
+                         Tafel Toevoegen
+                       </button>
+                     </div>
+                   </div>
             <div className="card-body">
               {/* Add Table Form */}
               {showAddTable && (
