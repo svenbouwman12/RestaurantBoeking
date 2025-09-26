@@ -487,9 +487,6 @@ p {
   }
 }
 
-.fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
 
 .slide-in {
   animation: slideIn 0.6s ease-out;

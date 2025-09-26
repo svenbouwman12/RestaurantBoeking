@@ -79,6 +79,18 @@
   align-items: center;
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-logo {
+  height: 40px;
+  width: auto;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(96%) contrast(97%);
+}
+
 .nav-title {
   font-size: 1.75rem;
   font-weight: 800;

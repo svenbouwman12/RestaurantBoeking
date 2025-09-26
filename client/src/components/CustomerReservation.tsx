@@ -185,7 +185,7 @@ const CustomerReservation: React.FC = () => {
   if (success) {
     return (
       <div className="container-narrow">
-        <div className="card text-center fade-in">
+        <div className="card text-center">
           <CheckCircle size={80} className="text-success" style={{ margin: '0 auto 2rem' }} />
           <h2 className="card-title text-success">Reservering Bevestigd!</h2>
           <p className="text-lg">Bedankt voor je reservering! Je tafel is automatisch toegewezen.</p>
@@ -213,7 +213,7 @@ const CustomerReservation: React.FC = () => {
 
   return (
     <div className="container-narrow">
-      <div className="card fade-in">
+      <div className="card">
         <div className="card-header">
           <h2 className="card-title">Maak een Reservering</h2>
           <p className="text-muted">Reserveer je tafel bij ons restaurant en ervaar culinaire perfectie</p>

@@ -13,7 +13,10 @@ function App() {
         <nav className="navbar">
           <div className="container">
             <div className="nav-content">
-              <h1 className="nav-title">🍽️ Tafel Reserveren</h1>
+              <div className="nav-brand">
+                <img src="/zaytun logo.svg" alt="Zaytun Logo" className="nav-logo" />
+                <h1 className="nav-title">Tafel Reserveren</h1>
+              </div>
               <div className="nav-links">
                 <Link 
                   to="/" 
@@ -37,7 +40,7 @@ function App() {
         {currentView === 'customer' && (
           <section className="hero">
             <div className="container">
-              <div className="hero-content fade-in">
+              <div className="hero-content">
                 <h1>Reserveer Je Tafel</h1>
                 <p>Ervaar culinaire perfectie in een sfeervolle omgeving. Reserveer nu je tafel en laat je verwennen door onze chef-kok.</p>
                 <div className="hero-cta">

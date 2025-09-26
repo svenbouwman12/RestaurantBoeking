@@ -278,7 +278,7 @@ const OwnerDashboard: React.FC = () => {
 
   return (
     <div className="container">
-      <div className="card fade-in">
+      <div className="card">
         <div className="card-header">
           <h1 className="card-title">Eigenaar Dashboard</h1>
           <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
