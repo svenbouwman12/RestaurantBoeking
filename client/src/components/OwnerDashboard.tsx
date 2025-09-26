@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { format, parseISO } from 'date-fns';
+import { supabase } from '../lib/supabase';
 
 interface Table {
   id: string;
@@ -86,13 +87,32 @@ const OwnerDashboard: React.FC = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [tablesRes, reservationsRes] = await Promise.all([
-        axios.get('/api/tables'),
-        axios.get('/api/reservations', { params: { date: selectedDate } })
-      ]);
+      // Fetch tables
+      const { data: tablesData, error: tablesError } = await supabase
+        .from('tables')
+        .select('*')
+        .order('name');
       
-      setTables(tablesRes.data);
-      setReservations(reservationsRes.data);
+      if (tablesError) throw tablesError;
+      
+      // Fetch reservations for selected date
+      const { data: reservationsData, error: reservationsError } = await supabase
+        .from('reservations')
+        .select(`
+          *,
+          tables (
+            id,
+            name,
+            seats
+          )
+        `)
+        .eq('date', selectedDate)
+        .order('time', { ascending: true });
+      
+      if (reservationsError) throw reservationsError;
+      
+      setTables(tablesData);
+      setReservations(reservationsData);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Error loading data');
@@ -107,8 +127,14 @@ const OwnerDashboard: React.FC = () => {
 
   const fetchOrders = async (reservationId: string) => {
     try {
-      const response = await axios.get(`/api/reservations/${reservationId}/orders`);
-      setOrders(response.data);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('reservation_id', reservationId)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      setOrders(data);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -145,7 +171,13 @@ const OwnerDashboard: React.FC = () => {
 
   const handleStatusChange = async (reservationId: string, newStatus: string) => {
     try {
-      await axios.patch(`/api/reservations/${reservationId}`, { status: newStatus });
+      const { error } = await supabase
+        .from('reservations')
+        .update({ status: newStatus })
+        .eq('id', reservationId);
+      
+      if (error) throw error;
+      
       await fetchData();
       if (selectedReservation?.id === reservationId) {
         setSelectedReservation(prev => prev ? { ...prev, status: newStatus } : null);
@@ -158,7 +190,12 @@ const OwnerDashboard: React.FC = () => {
   const handleCreateReservation = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('/api/reservations', newReservation);
+      const { error } = await supabase
+        .from('reservations')
+        .insert([newReservation]);
+      
+      if (error) throw error;
+      
       setShowReservationModal(false);
       setNewReservation({
         table_id: '',
@@ -181,10 +218,15 @@ const OwnerDashboard: React.FC = () => {
     if (!selectedReservation) return;
     
     try {
-      await axios.post('/api/orders', {
-        ...newOrder,
-        reservation_id: selectedReservation.id
-      });
+      const { error } = await supabase
+        .from('orders')
+        .insert([{
+          ...newOrder,
+          reservation_id: selectedReservation.id
+        }]);
+      
+      if (error) throw error;
+      
       setShowOrderModal(false);
       setNewOrder({
         item_name: '',
@@ -202,7 +244,13 @@ const OwnerDashboard: React.FC = () => {
     if (!window.confirm('Are you sure you want to delete this reservation?')) return;
     
     try {
-      await axios.delete(`/api/reservations/${reservationId}`);
+      const { error } = await supabase
+        .from('reservations')
+        .delete()
+        .eq('id', reservationId);
+      
+      if (error) throw error;
+      
       await fetchData();
       if (selectedReservation?.id === reservationId) {
         setSelectedReservation(null);

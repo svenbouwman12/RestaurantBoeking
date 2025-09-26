@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
 import axios from 'axios';
+import { supabase } from '../lib/supabase';
 
 interface Table {
   id: string;
@@ -50,10 +51,28 @@ const CustomerReservation: React.FC = () => {
     setLoading(true);
     try {
       const dateStr = selectedDate.toISOString().split('T')[0];
-      const response = await axios.get('/api/tables/available', {
-        params: { date: dateStr, time: selectedTime }
-      });
-      setAvailableTables(response.data);
+      
+      // Get all tables
+      const { data: allTables, error: tablesError } = await supabase
+        .from('tables')
+        .select('*');
+      
+      if (tablesError) throw tablesError;
+      
+      // Get occupied reservations for the selected date and time
+      const { data: occupiedReservations, error: reservationsError } = await supabase
+        .from('reservations')
+        .select('table_id')
+        .eq('date', dateStr)
+        .eq('status', 'confirmed')
+        .or('status.eq.arrived,status.eq.in_progress');
+      
+      if (reservationsError) throw reservationsError;
+      
+      const occupiedTableIds = occupiedReservations.map(r => r.table_id);
+      const availableTables = allTables.filter(table => !occupiedTableIds.includes(table.id));
+      
+      setAvailableTables(availableTables);
     } catch (error) {
       console.error('Error checking availability:', error);
       setError('Error checking table availability');
@@ -101,13 +120,26 @@ const CustomerReservation: React.FC = () => {
 
     try {
       const reservationData = {
-        ...formData,
+        table_id: formData.table_id,
+        customer_name: formData.customer_name,
+        customer_email: formData.customer_email,
+        customer_phone: formData.customer_phone,
+        guests: formData.guests,
         date: selectedDate.toISOString().split('T')[0],
-        time: selectedTime
+        time: selectedTime,
+        notes: formData.notes,
+        status: 'pending'
       };
 
-      const response = await axios.post('/api/reservations', reservationData);
-      console.log('Reservation created:', response.data);
+      const { data, error } = await supabase
+        .from('reservations')
+        .insert([reservationData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      console.log('Reservation created:', data);
       setSuccess(true);
       
       // Reset form
@@ -124,7 +156,8 @@ const CustomerReservation: React.FC = () => {
       setSelectedDate(new Date());
       setSelectedTime('19:00');
     } catch (error: any) {
-      setError(error.response?.data?.error || 'Error creating reservation');
+      console.error('Error creating reservation:', error);
+      setError(error.message || 'Error creating reservation');
     } finally {
       setSubmitting(false);
     }
