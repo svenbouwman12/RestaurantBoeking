@@ -11,6 +11,7 @@ interface Table {
 }
 
 interface ReservationData {
+  table_id: string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
@@ -30,6 +31,7 @@ const CustomerReservation: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   const [formData, setFormData] = useState<ReservationData>({
+    table_id: '',
     customer_name: '',
     customer_email: '',
     customer_phone: '',
@@ -66,19 +68,19 @@ const CustomerReservation: React.FC = () => {
       
       if (reservationsError) throw reservationsError;
       
-      const occupiedTableIds = occupiedReservations.map(r => r.table_id);
-      const availableTables = allTables.filter(table => !occupiedTableIds.includes(table.id));
+      const occupiedTableIds = occupiedReservations.map((r: any) => r.table_id);
+      const availableTables = allTables.filter((table: Table) => !occupiedTableIds.includes(table.id));
       
       // Find the best table for the number of guests
-      const suitableTables = availableTables.filter(table => table.seats >= formData.guests);
-      const bestTable = suitableTables.sort((a, b) => a.seats - b.seats)[0]; // Smallest suitable table
+      const suitableTables = availableTables.filter((table: Table) => table.seats >= formData.guests);
+      const bestTable = suitableTables.sort((a: Table, b: Table) => a.seats - b.seats)[0]; // Smallest suitable table
       
       setAvailableTables(availableTables);
       
       if (bestTable) {
-        setFormData(prev => ({ ...prev, table_id: bestTable.id }));
+        setFormData((prev: ReservationData) => ({ ...prev, table_id: bestTable.id }));
       } else {
-        setFormData(prev => ({ ...prev, table_id: '' }));
+        setFormData((prev: ReservationData) => ({ ...prev, table_id: '' }));
       }
     } catch (error) {
       console.error('Error checking availability:', error);
@@ -96,7 +98,7 @@ const CustomerReservation: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev: ReservationData) => ({
       ...prev,
       [name]: value
     }));
@@ -105,7 +107,7 @@ const CustomerReservation: React.FC = () => {
   const handleDateChange = (date: Date | null) => {
     if (date) {
       setSelectedDate(date);
-      setFormData(prev => ({
+      setFormData((prev: ReservationData) => ({
         ...prev,
         date: date.toISOString().split('T')[0]
       }));
@@ -114,7 +116,7 @@ const CustomerReservation: React.FC = () => {
 
   const handleTimeChange = (time: string) => {
     setSelectedTime(time);
-    setFormData(prev => ({
+    setFormData((prev: ReservationData) => ({
       ...prev,
       time: time
     }));
@@ -158,6 +160,7 @@ const CustomerReservation: React.FC = () => {
       
       // Reset form
       setFormData({
+        table_id: '',
         customer_name: '',
         customer_email: '',
         customer_phone: '',
@@ -177,7 +180,7 @@ const CustomerReservation: React.FC = () => {
   };
 
   // Get the assigned table info for display
-  const assignedTable = availableTables.find(table => table.id === formData.table_id);
+  const assignedTable = availableTables.find((table: Table) => table.id === formData.table_id);
 
   if (success) {
     return (
