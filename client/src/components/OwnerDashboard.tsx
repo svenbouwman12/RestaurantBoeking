@@ -12,10 +12,14 @@ import {
   Phone,
   Mail,
   MessageSquare,
-  Settings
+  Settings,
+  Utensils,
+  Building
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { supabase } from '../lib/supabase';
+import MenuManagement from './MenuManagement';
+import TableManagement from './TableManagement';
 
 interface Table {
   id: string;
@@ -52,6 +56,7 @@ interface Order {
 
 const OwnerDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = useState<'dashboard' | 'menu' | 'tables'>('dashboard');
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -280,12 +285,54 @@ const OwnerDashboard: React.FC = () => {
     );
   }
 
+  // Show specific management views
+  if (currentTab === 'menu') {
+    return <MenuManagement onBack={() => setCurrentTab('dashboard')} />;
+  }
+
+  if (currentTab === 'tables') {
+    return <TableManagement onBack={() => setCurrentTab('dashboard')} />;
+  }
+
   return (
     <div className="container">
       <div className="card">
         <div className="card-header">
           <h1 className="card-title">Eigenaar Dashboard</h1>
-          <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+          
+          {/* Tab Navigation */}
+          <div className="dashboard-tabs">
+            <button
+              className={`tab-btn ${currentTab === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('dashboard')}
+            >
+              <Calendar size={16} style={{ marginRight: '8px' }} />
+              Dashboard
+            </button>
+            <button
+              className={`tab-btn ${currentTab === 'menu' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('menu')}
+            >
+              <Utensils size={16} style={{ marginRight: '8px' }} />
+              Menu Beheer
+            </button>
+            <button
+              className={`tab-btn ${currentTab === 'tables' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('tables')}
+            >
+              <Building size={16} style={{ marginRight: '8px' }} />
+              Tafel Beheer
+            </button>
+            <button
+              className="tab-btn"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings size={16} style={{ marginRight: '8px' }} />
+              Instellingen
+            </button>
+          </div>
+          
+          <div className="flex gap-4" style={{ alignItems: 'center', flexWrap: 'wrap', marginTop: '1rem' }}>
             <input
               type="date"
               value={selectedDate}
@@ -293,19 +340,12 @@ const OwnerDashboard: React.FC = () => {
               className="form-input"
               style={{ width: 'auto', minWidth: '200px' }}
             />
-            <button 
+            <button
               className="btn btn-primary"
               onClick={() => setShowReservationModal(true)}
             >
               <Plus size={20} style={{ marginRight: '8px' }} />
               Reservering Toevoegen
-            </button>
-            <button 
-              className="btn btn-secondary"
-              onClick={() => navigate('/settings')}
-            >
-              <Settings size={20} style={{ marginRight: '8px' }} />
-              Instellingen
             </button>
           </div>
         </div>

@@ -5,13 +5,6 @@ import {
   ArrowLeft,
   Clock,
   Calendar,
-  Users,
-  Building,
-  Plus,
-  Edit,
-  Trash2,
-  Check,
-  X,
   Utensils
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -31,13 +24,6 @@ interface OpeningHours {
   closed: boolean;
 }
 
-interface Table {
-  id: string;
-  name: string;
-  seats: number;
-  position_x: number;
-  position_y: number;
-}
 
 interface SettingsProps {
   onBack: () => void;
@@ -58,13 +44,6 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
   const [restaurantName, setRestaurantName] = useState('Zaytun Restaurant');
   
   // Table management state
-  const [tables, setTables] = useState<Table[]>([]);
-  const [showAddTable, setShowAddTable] = useState(false);
-  const [editingTable, setEditingTable] = useState<Table | null>(null);
-  const [newTable, setNewTable] = useState({
-    name: '',
-    seats: 2
-  });
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
@@ -153,105 +132,10 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
     }
   };
 
-  const fetchTables = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tables')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      setTables(data);
-    } catch (error) {
-      console.error('Error fetching tables:', error);
-      setError('Fout bij het laden van tafels');
-    }
-  }, []);
-
-  const addTable = async () => {
-    if (!newTable.name.trim() || newTable.seats < 1) {
-      setError('Vul een geldige tafelnaam en aantal plaatsen in');
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('tables')
-        .insert([{
-          name: newTable.name.trim(),
-          seats: newTable.seats,
-          position_x: 0,
-          position_y: 0
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      setTables(prev => [...prev, data]);
-      setNewTable({ name: '', seats: 2 });
-      setShowAddTable(false);
-      setSuccess('Tafel succesvol toegevoegd!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      console.error('Error adding table:', error);
-      setError('Fout bij het toevoegen van tafel');
-    }
-  };
-
-  const updateTable = async (table: Table) => {
-    if (!table.name.trim() || table.seats < 1) {
-      setError('Vul een geldige tafelnaam en aantal plaatsen in');
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('tables')
-        .update({
-          name: table.name.trim(),
-          seats: table.seats
-        })
-        .eq('id', table.id);
-
-      if (error) throw error;
-      
-      setTables(prev => prev.map(t => t.id === table.id ? table : t));
-      setEditingTable(null);
-      setSuccess('Tafel succesvol bijgewerkt!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      console.error('Error updating table:', error);
-      setError('Fout bij het bijwerken van tafel');
-    }
-  };
-
-  const deleteTable = async (tableId: string) => {
-    if (!window.confirm('Weet je zeker dat je deze tafel wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('tables')
-        .delete()
-        .eq('id', tableId);
-
-      if (error) throw error;
-      
-      setTables(prev => prev.filter(t => t.id !== tableId));
-      setSuccess('Tafel succesvol verwijderd!');
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (error) {
-      console.error('Error deleting table:', error);
-      setError('Fout bij het verwijderen van tafel');
-    }
-  };
 
   useEffect(() => {
     fetchSettings();
-    fetchTables();
-  }, [fetchSettings, fetchTables]);
+  }, [fetchSettings]);
 
   const dayNames = {
     monday: 'Maandag',
@@ -479,179 +363,6 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
                    </div>
                  </div>
 
-                 {/* Table Management */}
-                 <div className="card mb-20">
-                   <div className="card-header">
-                     <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                       <h3 className="card-title">
-                         <Users size={20} style={{ marginRight: '8px' }} />
-                         Tafel Beheer
-                       </h3>
-                       <button
-                         className="btn btn-primary"
-                         onClick={() => setShowAddTable(true)}
-                       >
-                         <Plus size={16} style={{ marginRight: '8px' }} />
-                         Tafel Toevoegen
-                       </button>
-                     </div>
-                   </div>
-            <div className="card-body">
-              {/* Add Table Form */}
-              {showAddTable && (
-                <div className="card mb-20" style={{ background: 'var(--neutral-50)', border: '2px solid var(--primary-color)' }}>
-                  <div className="card-header">
-                    <h4 className="card-title">Nieuwe Tafel Toevoegen</h4>
-                  </div>
-                  <div className="card-body">
-                    <div className="grid grid-2">
-                      <div className="form-group">
-                        <label className="form-label">Tafel Naam *</label>
-                        <input
-                          type="text"
-                          value={newTable.name}
-                          onChange={(e) => setNewTable(prev => ({ ...prev, name: e.target.value }))}
-                          className="form-input"
-                          placeholder="Bijv. Tafel 1, Venster Tafel, etc."
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Aantal Plaatsen *</label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="20"
-                          value={newTable.seats}
-                          onChange={(e) => setNewTable(prev => ({ ...prev, seats: parseInt(e.target.value) || 2 }))}
-                          className="form-input"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex" style={{ gap: '1rem', marginTop: '1rem' }}>
-                      <button 
-                        className="btn btn-primary"
-                        onClick={addTable}
-                      >
-                        <Check size={16} style={{ marginRight: '8px' }} />
-                        Tafel Toevoegen
-                      </button>
-                      <button 
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          setShowAddTable(false);
-                          setNewTable({ name: '', seats: 2 });
-                        }}
-                      >
-                        <X size={16} style={{ marginRight: '8px' }} />
-                        Annuleren
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tables List */}
-              <div className="grid grid-1" style={{ gap: '1rem' }}>
-                {tables.length === 0 ? (
-                  <div className="text-center" style={{ padding: '2rem', color: 'var(--neutral-500)' }}>
-                    <Users size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
-                    <p>Nog geen tafels toegevoegd. Voeg je eerste tafel toe om te beginnen.</p>
-                  </div>
-                ) : (
-                  tables.map(table => (
-                    <div key={table.id} className="card" style={{ 
-                      background: 'white',
-                      border: '2px solid var(--neutral-200)',
-                      borderRadius: '12px',
-                      padding: '1.5rem'
-                    }}>
-                      {editingTable?.id === table.id ? (
-                        <div className="grid grid-2" style={{ gap: '1rem' }}>
-                          <div className="form-group">
-                            <label className="form-label">Tafel Naam</label>
-                            <input
-                              type="text"
-                              value={editingTable.name}
-                              onChange={(e) => setEditingTable(prev => prev ? { ...prev, name: e.target.value } : null)}
-                              className="form-input"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label className="form-label">Aantal Plaatsen</label>
-                            <input
-                              type="number"
-                              min="1"
-                              max="20"
-                              value={editingTable.seats}
-                              onChange={(e) => setEditingTable(prev => prev ? { ...prev, seats: parseInt(e.target.value) || 2 } : null)}
-                              className="form-input"
-                            />
-                          </div>
-                          <div className="flex" style={{ gap: '0.5rem', gridColumn: '1 / -1' }}>
-                            <button 
-                              className="btn btn-primary"
-                              onClick={() => editingTable && updateTable(editingTable)}
-                            >
-                              <Check size={14} style={{ marginRight: '4px' }} />
-                              Opslaan
-                            </button>
-                            <button 
-                              className="btn btn-secondary"
-                              onClick={() => setEditingTable(null)}
-                            >
-                              <X size={14} style={{ marginRight: '4px' }} />
-                              Annuleren
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div className="flex" style={{ alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ 
-                              background: 'var(--primary-color)',
-                              color: 'white',
-                              width: '48px',
-                              height: '48px',
-                              borderRadius: '12px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '18px',
-                              fontWeight: '700'
-                            }}>
-                              {table.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                              <h4 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: '600', color: 'var(--neutral-900)' }}>
-                                {table.name}
-                              </h4>
-                              <p style={{ margin: '0', color: 'var(--neutral-600)', fontSize: '14px' }}>
-                                {table.seats} {table.seats === 1 ? 'plaats' : 'plaatsen'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex" style={{ gap: '0.5rem' }}>
-                            <button 
-                              className="btn btn-secondary"
-                              onClick={() => setEditingTable(table)}
-                            >
-                              <Edit size={14} />
-                            </button>
-                            <button 
-                              className="btn btn-danger"
-                              onClick={() => deleteTable(table.id)}
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
