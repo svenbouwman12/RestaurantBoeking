@@ -28,10 +28,6 @@ const Menu: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  useEffect(() => {
-    fetchMenu();
-  }, [fetchMenu]);
-
   const fetchMenu = useCallback(async () => {
     try {
       setLoading(true);
@@ -70,6 +66,10 @@ const Menu: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
 
   const getCategoryDescription = (categoryName: string): string => {
     const descriptions: { [key: string]: string } = {
