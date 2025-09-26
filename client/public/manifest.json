@@ -3,13 +3,13 @@
   "name": "Restaurant Table Reservation System",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "zaytun-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#E5AD43",
+  "background_color": "#FAF5E8"
 }
