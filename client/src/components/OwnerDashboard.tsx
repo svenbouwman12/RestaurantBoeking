@@ -351,39 +351,39 @@ const OwnerDashboard: React.FC = () => {
           <>
             {/* Filters */}
             <div className="grid grid-2 mb-20">
-          <div className="form-group">
-            <label className="form-label">
-              <Search size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Zoeken
-            </label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-input"
-              placeholder="Zoek op klantnaam of tafel..."
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">
-              <Filter size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Status Filter
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="form-input"
-            >
-              <option value="all">Alle Statussen</option>
-              <option value="pending">In behandeling</option>
-              <option value="confirmed">Bevestigd</option>
-              <option value="arrived">Aangekomen</option>
-              <option value="in_progress">Bezig</option>
-              <option value="completed">Voltooid</option>
-              <option value="cancelled">Geannuleerd</option>
-            </select>
-          </div>
-        </div>
+              <div className="form-group">
+                <label className="form-label">
+                  <Search size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Zoeken
+                </label>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="form-input"
+                  placeholder="Zoek op klantnaam of tafel..."
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">
+                  <Filter size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Status Filter
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="form-input"
+                >
+                  <option value="all">Alle Statussen</option>
+                  <option value="pending">In behandeling</option>
+                  <option value="confirmed">Bevestigd</option>
+                  <option value="arrived">Aangekomen</option>
+                  <option value="in_progress">Bezig</option>
+                  <option value="completed">Voltooid</option>
+                  <option value="cancelled">Geannuleerd</option>
+                </select>
+              </div>
+            </div>
 
         <div className="grid grid-2">
           {/* Table Layout */}
