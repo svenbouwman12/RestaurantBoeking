@@ -302,8 +302,10 @@ p {
   gap: 0.5rem;
   flex-wrap: nowrap;
   flex: 1;
-  justify-content: space-between;
+  justify-content: flex-start;
   min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
 }
 
 .date-nav-btn {
@@ -417,13 +419,11 @@ p {
 }
 
 .time-card {
-  min-width: 0;
+  min-width: 60px;
   font-weight: 600;
-  flex: 1;
-  max-width: 100%;
-  overflow: hidden;
+  flex: 0 0 auto;
+  padding: 0.5rem 0.75rem;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .card-header {
