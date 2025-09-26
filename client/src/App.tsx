@@ -20,14 +20,14 @@ function App() {
                   className={`nav-link ${currentView === 'customer' ? 'active' : ''}`}
                   onClick={() => setCurrentView('customer')}
                 >
-                  Make Reservation
+                  Reservering Maken
                 </Link>
                 <Link 
                   to="/owner" 
                   className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
                   onClick={() => setCurrentView('owner')}
                 >
-                  Owner Dashboard
+                  Eigenaar Dashboard
                 </Link>
               </div>
             </div>
@@ -43,7 +43,7 @@ function App() {
 
         <footer className="footer">
           <div className="container">
-            <p>&copy; 2024 Tafel Reserveren. All rights reserved.</p>
+            <p>&copy; 2024 Tafel Reserveren. Alle rechten voorbehouden.</p>
           </div>
         </footer>
       </div>

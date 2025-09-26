@@ -137,13 +137,13 @@ const CustomerReservation: React.FC = () => {
       <div className="container">
         <div className="card text-center">
           <CheckCircle size={64} className="text-success" style={{ margin: '0 auto 20px' }} />
-          <h2 className="card-title text-success">Reservation Confirmed!</h2>
-          <p>Thank you for your reservation. We look forward to serving you!</p>
+          <h2 className="card-title text-success">Reservering Bevestigd!</h2>
+          <p>Bedankt voor je reservering. We kijken ernaar uit om je te verwelkomen!</p>
           <button 
             className="btn btn-primary"
             onClick={() => setSuccess(false)}
           >
-            Make Another Reservation
+            Nieuwe Reservering Maken
           </button>
         </div>
       </div>
@@ -154,8 +154,8 @@ const CustomerReservation: React.FC = () => {
     <div className="container">
       <div className="card">
         <div className="card-header">
-          <h1 className="card-title">Make a Reservation</h1>
-          <p className="text-muted">Book your table at our restaurant</p>
+          <h1 className="card-title">Maak een Reservering</h1>
+          <p className="text-muted">Reserveer je tafel bij ons restaurant</p>
         </div>
 
         {error && <div className="error">{error}</div>}
@@ -166,7 +166,7 @@ const CustomerReservation: React.FC = () => {
             <div className="form-group">
               <label className="form-label">
                 <Calendar size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Select Date
+                Selecteer Datum
               </label>
               <DatePicker
                 selected={selectedDate}
@@ -175,7 +175,7 @@ const CustomerReservation: React.FC = () => {
                 maxDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)} // 30 days from now
                 dateFormat="MMMM d, yyyy"
                 className="form-input"
-                placeholderText="Select a date"
+                placeholderText="Selecteer een datum"
               />
             </div>
 
@@ -183,7 +183,7 @@ const CustomerReservation: React.FC = () => {
             <div className="form-group">
               <label className="form-label">
                 <Clock size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Select Time
+                Selecteer Tijd
               </label>
               <select
                 name="time"
@@ -204,7 +204,7 @@ const CustomerReservation: React.FC = () => {
           <div className="form-group">
             <label className="form-label">
               <Users size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Number of Guests
+              Aantal Gasten
             </label>
             <select
               name="guests"
@@ -213,19 +213,19 @@ const CustomerReservation: React.FC = () => {
               className="form-input"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                <option key={num} value={num}>{num} {num === 1 ? 'Gast' : 'Gasten'}</option>
               ))}
             </select>
           </div>
 
           {/* Available Tables */}
           {loading ? (
-            <div className="loading">Checking availability...</div>
+            <div className="loading">Beschikbaarheid controleren...</div>
           ) : (
             <div className="form-group">
-              <label className="form-label">Available Tables</label>
+              <label className="form-label">Beschikbare Tafels</label>
               {filteredTables.length === 0 ? (
-                <p className="text-danger">No tables available for the selected date and time</p>
+                <p className="text-danger">Geen tafels beschikbaar voor de geselecteerde datum en tijd</p>
               ) : (
                 <div className="grid grid-3">
                   {filteredTables.map(table => (
@@ -240,7 +240,7 @@ const CustomerReservation: React.FC = () => {
                       onClick={() => setFormData(prev => ({ ...prev, table_id: table.id }))}
                     >
                       <h4>{table.name}</h4>
-                      <p className="text-muted">{table.seats} seats</p>
+                      <p className="text-muted">{table.seats} plaatsen</p>
                     </div>
                   ))}
                 </div>
@@ -251,7 +251,7 @@ const CustomerReservation: React.FC = () => {
           {/* Customer Information */}
           <div className="grid grid-2">
             <div className="form-group">
-              <label className="form-label">Full Name *</label>
+              <label className="form-label">Volledige Naam *</label>
               <input
                 type="text"
                 name="customer_name"
@@ -259,32 +259,32 @@ const CustomerReservation: React.FC = () => {
                 onChange={handleInputChange}
                 className="form-input"
                 required
-                placeholder="Enter your full name"
+                placeholder="Voer je volledige naam in"
               />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Email</label>
+              <label className="form-label">E-mail</label>
               <input
                 type="email"
                 name="customer_email"
                 value={formData.customer_email}
                 onChange={handleInputChange}
                 className="form-input"
-                placeholder="Enter your email"
+                placeholder="Voer je e-mail in"
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label className="form-label">Phone Number</label>
+            <label className="form-label">Telefoonnummer</label>
             <input
               type="tel"
               name="customer_phone"
               value={formData.customer_phone}
               onChange={handleInputChange}
               className="form-input"
-              placeholder="Enter your phone number"
+              placeholder="Voer je telefoonnummer in"
             />
           </div>
 
@@ -292,14 +292,14 @@ const CustomerReservation: React.FC = () => {
           <div className="form-group">
             <label className="form-label">
               <MessageSquare size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Special Requests (Optional)
+              Bijzondere Wensen (Optioneel)
             </label>
             <textarea
               name="notes"
               value={formData.notes}
               onChange={handleInputChange}
               className="form-textarea"
-              placeholder="Any special dietary requirements, celebrations, or other requests..."
+              placeholder="Eventuele dieetwensen, vieringen of andere verzoeken..."
               rows={3}
             />
           </div>
@@ -311,7 +311,7 @@ const CustomerReservation: React.FC = () => {
               disabled={submitting || !formData.table_id || !formData.customer_name}
               style={{ fontSize: '18px', padding: '15px 30px' }}
             >
-              {submitting ? 'Creating Reservation...' : 'Make Reservation'}
+              {submitting ? 'Reservering aanmaken...' : 'Reservering Maken'}
             </button>
           </div>
         </form>

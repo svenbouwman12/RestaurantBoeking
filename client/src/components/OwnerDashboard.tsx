@@ -233,7 +233,7 @@ const OwnerDashboard: React.FC = () => {
     <div className="container">
       <div className="card">
         <div className="card-header">
-          <h1 className="card-title">Owner Dashboard</h1>
+          <h1 className="card-title">Eigenaar Dashboard</h1>
           <div className="flex gap-2">
             <input
               type="date"
@@ -247,7 +247,7 @@ const OwnerDashboard: React.FC = () => {
               onClick={() => setShowReservationModal(true)}
             >
               <Plus size={20} style={{ marginRight: '8px' }} />
-              Add Reservation
+              Reservering Toevoegen
             </button>
           </div>
         </div>
@@ -259,14 +259,14 @@ const OwnerDashboard: React.FC = () => {
           <div className="form-group">
             <label className="form-label">
               <Search size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Search
+              Zoeken
             </label>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="form-input"
-              placeholder="Search by customer name or table..."
+              placeholder="Zoek op klantnaam of tafel..."
             />
           </div>
           <div className="form-group">
@@ -279,13 +279,13 @@ const OwnerDashboard: React.FC = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="form-input"
             >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="arrived">Arrived</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="all">Alle Statussen</option>
+              <option value="pending">In behandeling</option>
+              <option value="confirmed">Bevestigd</option>
+              <option value="arrived">Aangekomen</option>
+              <option value="in_progress">Bezig</option>
+              <option value="completed">Voltooid</option>
+              <option value="cancelled">Geannuleerd</option>
             </select>
           </div>
         </div>
@@ -293,7 +293,7 @@ const OwnerDashboard: React.FC = () => {
         <div className="grid grid-2">
           {/* Table Layout */}
           <div className="card">
-            <h3 className="card-title">Table Layout</h3>
+            <h3 className="card-title">Tafel Layout</h3>
             <div className="table-grid">
               {tables.map(table => {
                 const status = getTableStatus(table.id);
@@ -330,9 +330,14 @@ const OwnerDashboard: React.FC = () => {
                     }}
                   >
                     <div>{table.name}</div>
-                    <div>{table.seats} seats</div>
+                    <div>{table.seats} plaatsen</div>
                     <div style={{ fontSize: '10px', textTransform: 'capitalize' }}>
-                      {status}
+                      {status === 'available' ? 'beschikbaar' : 
+                       status === 'confirmed' ? 'gereserveerd' :
+                       status === 'arrived' ? 'aangekomen' :
+                       status === 'in_progress' ? 'bezig' :
+                       status === 'completed' ? 'voltooid' :
+                       status === 'cancelled' ? 'geannuleerd' : status}
                     </div>
                   </div>
                 );
@@ -341,27 +346,27 @@ const OwnerDashboard: React.FC = () => {
             <div className="legend">
               <div className="legend-item">
                 <div className="legend-color" style={{ backgroundColor: '#28a745' }}></div>
-                <span>Available</span>
+                <span>Beschikbaar</span>
               </div>
               <div className="legend-item">
                 <div className="legend-color" style={{ backgroundColor: '#ffc107' }}></div>
-                <span>Reserved</span>
+                <span>Gereserveerd</span>
               </div>
               <div className="legend-item">
                 <div className="legend-color" style={{ backgroundColor: '#dc3545' }}></div>
-                <span>Occupied</span>
+                <span>Bezet</span>
               </div>
             </div>
           </div>
 
           {/* Reservation Details */}
           <div className="card">
-            <h3 className="card-title">Reservation Details</h3>
+            <h3 className="card-title">Reservering Details</h3>
             {selectedReservation ? (
               <div>
                 <div className="reservation-info">
                   <h4>{selectedReservation.customer_name}</h4>
-                  <p><Users size={16} style={{ marginRight: '8px' }} />{selectedReservation.guests} guests</p>
+                  <p><Users size={16} style={{ marginRight: '8px' }} />{selectedReservation.guests} gasten</p>
                   <p><Calendar size={16} style={{ marginRight: '8px' }} />{format(parseISO(selectedReservation.date), 'MMM d, yyyy')}</p>
                   <p><Clock size={16} style={{ marginRight: '8px' }} />{selectedReservation.time}</p>
                   <p><Phone size={16} style={{ marginRight: '8px' }} />{selectedReservation.customer_phone || 'N/A'}</p>
@@ -372,48 +377,52 @@ const OwnerDashboard: React.FC = () => {
                 </div>
 
                 <div className="status-controls">
-                  <label className="form-label">Update Status:</label>
+                  <label className="form-label">Status Bijwerken:</label>
                   <select
                     value={selectedReservation.status}
                     onChange={(e) => handleStatusChange(selectedReservation.id, e.target.value)}
                     className="form-input"
                   >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="arrived">Arrived</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="pending">In behandeling</option>
+                    <option value="confirmed">Bevestigd</option>
+                    <option value="arrived">Aangekomen</option>
+                    <option value="in_progress">Bezig</option>
+                    <option value="completed">Voltooid</option>
+                    <option value="cancelled">Geannuleerd</option>
                   </select>
                 </div>
 
                 <div className="orders-section">
                   <div className="flex justify-between align-center">
-                    <h4>Orders</h4>
+                    <h4>Bestellingen</h4>
                     <button 
                       className="btn btn-primary btn-sm"
                       onClick={() => setShowOrderModal(true)}
                     >
                       <Plus size={16} style={{ marginRight: '4px' }} />
-                      Add Order
+                      Bestelling Toevoegen
                     </button>
                   </div>
                   
                   {orders.length === 0 ? (
-                    <p className="text-muted">No orders yet</p>
+                    <p className="text-muted">Nog geen bestellingen</p>
                   ) : (
                     <div className="orders-list">
                       {orders.map(order => (
                         <div key={order.id} className="order-item">
                           <div>
                             <strong>{order.item_name}</strong>
-                            <span className="text-muted"> ({order.item_type})</span>
+                            <span className="text-muted"> ({order.item_type === 'food' ? 'eten' : order.item_type === 'drink' ? 'drank' : 'dessert'})</span>
                           </div>
                           <div>
-                            <span>Qty: {order.quantity}</span>
-                            <span className="text-muted"> | ${order.price.toFixed(2)}</span>
+                            <span>Aantal: {order.quantity}</span>
+                            <span className="text-muted"> | €{order.price.toFixed(2)}</span>
                             <span className={`status-badge status-${order.status}`}>
-                              {order.status}
+                              {order.status === 'pending' ? 'in behandeling' :
+                               order.status === 'preparing' ? 'wordt bereid' :
+                               order.status === 'ready' ? 'klaar' :
+                               order.status === 'served' ? 'geserveerd' :
+                               order.status === 'cancelled' ? 'geannuleerd' : order.status}
                             </span>
                           </div>
                         </div>
@@ -428,15 +437,15 @@ const OwnerDashboard: React.FC = () => {
                     onClick={() => handleDeleteReservation(selectedReservation.id)}
                   >
                     <Trash2 size={16} style={{ marginRight: '8px' }} />
-                    Delete Reservation
+                    Reservering Verwijderen
                   </button>
                 </div>
               </div>
             ) : selectedTable ? (
               <div>
                 <h4>{selectedTable.name}</h4>
-                <p>Seats: {selectedTable.seats}</p>
-                <p className="text-success">Available</p>
+                <p>Plaatsen: {selectedTable.seats}</p>
+                <p className="text-success">Beschikbaar</p>
                 <button 
                   className="btn btn-primary"
                   onClick={() => {
@@ -445,29 +454,34 @@ const OwnerDashboard: React.FC = () => {
                   }}
                 >
                   <Plus size={16} style={{ marginRight: '8px' }} />
-                  Create Reservation
+                  Reservering Maken
                 </button>
               </div>
             ) : (
-              <p className="text-muted">Click on a table to view details</p>
+              <p className="text-muted">Klik op een tafel om details te bekijken</p>
             )}
           </div>
         </div>
 
         {/* Reservations List */}
         <div className="card mt-20">
-          <h3 className="card-title">All Reservations ({filteredReservations.length})</h3>
+          <h3 className="card-title">Alle Reserveringen ({filteredReservations.length})</h3>
           <div className="reservations-list">
             {filteredReservations.map(reservation => (
               <div key={reservation.id} className="reservation-item">
                 <div className="reservation-main">
                   <h4>{reservation.customer_name}</h4>
-                  <p>{reservation.tables.name} • {reservation.guests} guests</p>
-                  <p>{format(parseISO(reservation.date), 'MMM d, yyyy')} at {reservation.time}</p>
+                  <p>{reservation.tables.name} • {reservation.guests} gasten</p>
+                  <p>{format(parseISO(reservation.date), 'MMM d, yyyy')} om {reservation.time}</p>
                 </div>
                 <div className="reservation-status">
                   <span className={`status-badge status-${reservation.status}`}>
-                    {reservation.status}
+                    {reservation.status === 'pending' ? 'In behandeling' :
+                     reservation.status === 'confirmed' ? 'Bevestigd' :
+                     reservation.status === 'arrived' ? 'Aangekomen' :
+                     reservation.status === 'in_progress' ? 'Bezig' :
+                     reservation.status === 'completed' ? 'Voltooid' :
+                     reservation.status === 'cancelled' ? 'Geannuleerd' : reservation.status}
                   </span>
                 </div>
                 <div className="reservation-actions">
@@ -488,24 +502,24 @@ const OwnerDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Create Reservation Modal */}
-      {showReservationModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Create New Reservation</h3>
+        {/* Create Reservation Modal */}
+        {showReservationModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Nieuwe Reservering Maken</h3>
             <form onSubmit={handleCreateReservation}>
               <div className="form-group">
-                <label className="form-label">Table</label>
+                <label className="form-label">Tafel</label>
                 <select
                   value={newReservation.table_id}
                   onChange={(e) => setNewReservation(prev => ({ ...prev, table_id: e.target.value }))}
                   className="form-input"
                   required
                 >
-                  <option value="">Select a table</option>
+                  <option value="">Selecteer een tafel</option>
                   {tables.map(table => (
                     <option key={table.id} value={table.id}>
-                      {table.name} ({table.seats} seats)
+                      {table.name} ({table.seats} plaatsen)
                     </option>
                   ))}
                 </select>
@@ -513,7 +527,7 @@ const OwnerDashboard: React.FC = () => {
 
               <div className="grid grid-2">
                 <div className="form-group">
-                  <label className="form-label">Customer Name</label>
+                  <label className="form-label">Klantnaam</label>
                   <input
                     type="text"
                     value={newReservation.customer_name}
@@ -523,7 +537,7 @@ const OwnerDashboard: React.FC = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Guests</label>
+                  <label className="form-label">Gasten</label>
                   <input
                     type="number"
                     min="1"
@@ -538,7 +552,7 @@ const OwnerDashboard: React.FC = () => {
 
               <div className="grid grid-2">
                 <div className="form-group">
-                  <label className="form-label">Date</label>
+                  <label className="form-label">Datum</label>
                   <input
                     type="date"
                     value={newReservation.date}
@@ -548,7 +562,7 @@ const OwnerDashboard: React.FC = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Time</label>
+                  <label className="form-label">Tijd</label>
                   <input
                     type="time"
                     value={newReservation.time}
@@ -560,7 +574,7 @@ const OwnerDashboard: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Email</label>
+                <label className="form-label">E-mail</label>
                 <input
                   type="email"
                   value={newReservation.customer_email}
@@ -570,7 +584,7 @@ const OwnerDashboard: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Phone</label>
+                <label className="form-label">Telefoon</label>
                 <input
                   type="tel"
                   value={newReservation.customer_phone}
@@ -580,7 +594,7 @@ const OwnerDashboard: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Notes</label>
+                <label className="form-label">Opmerkingen</label>
                 <textarea
                   value={newReservation.notes}
                   onChange={(e) => setNewReservation(prev => ({ ...prev, notes: e.target.value }))}
@@ -591,10 +605,10 @@ const OwnerDashboard: React.FC = () => {
 
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowReservationModal(false)}>
-                  Cancel
+                  Annuleren
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Create Reservation
+                  Reservering Maken
                 </button>
               </div>
             </form>
@@ -602,14 +616,14 @@ const OwnerDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Create Order Modal */}
-      {showOrderModal && selectedReservation && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Add Order for {selectedReservation.customer_name}</h3>
+        {/* Create Order Modal */}
+        {showOrderModal && selectedReservation && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Bestelling Toevoegen voor {selectedReservation.customer_name}</h3>
             <form onSubmit={handleCreateOrder}>
               <div className="form-group">
-                <label className="form-label">Item Name</label>
+                <label className="form-label">Item Naam</label>
                 <input
                   type="text"
                   value={newOrder.item_name}
@@ -627,13 +641,13 @@ const OwnerDashboard: React.FC = () => {
                     onChange={(e) => setNewOrder(prev => ({ ...prev, item_type: e.target.value }))}
                     className="form-input"
                   >
-                    <option value="food">Food</option>
-                    <option value="drink">Drink</option>
+                    <option value="food">Eten</option>
+                    <option value="drink">Drank</option>
                     <option value="dessert">Dessert</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Quantity</label>
+                  <label className="form-label">Aantal</label>
                   <input
                     type="number"
                     min="1"
@@ -646,7 +660,7 @@ const OwnerDashboard: React.FC = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Price</label>
+                <label className="form-label">Prijs</label>
                 <input
                   type="number"
                   step="0.01"
@@ -660,10 +674,10 @@ const OwnerDashboard: React.FC = () => {
 
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowOrderModal(false)}>
-                  Cancel
+                  Annuleren
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Add Order
+                  Bestelling Toevoegen
                 </button>
               </div>
             </form>
