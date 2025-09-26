@@ -23,6 +23,7 @@ const CustomerReservation: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('19:00');
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
+  const [dateOffset, setDateOffset] = useState<number>(0);
   const [availableTables, setAvailableTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -45,11 +46,11 @@ const CustomerReservation: React.FC = () => {
     '20:00', '20:30', '21:00', '21:30', '22:00'
   ];
 
-  // Generate available dates (next 7 days)
+  // Generate available dates (next 30 days)
   const generateAvailableDates = useCallback(() => {
     const dates = [];
     const today = new Date();
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       dates.push(date);
@@ -235,31 +236,49 @@ const CustomerReservation: React.FC = () => {
               Kies datum:
             </label>
             <div className="date-selector">
-              <div className="date-cards">
-                {availableDates.slice(0, 3).map((date: Date, index: number) => {
-                  const isToday = date.toDateString() === new Date().toDateString();
-                  const isSelected = date.toDateString() === selectedDate.toDateString();
-                  const isPast = date < new Date() && !isToday;
-                  
-                  return (
-                    <div
-                      key={date.toISOString()}
-                      className={`date-card ${isSelected ? 'selected' : ''} ${isPast ? 'unavailable' : ''}`}
-                      onClick={() => !isPast && setSelectedDate(date)}
-                    >
-                      <div className="date-day">
-                        {isToday ? 'Vandaag' : date.toLocaleDateString('nl-NL', { weekday: 'short' })}
+              <div className="date-navigation">
+                <button 
+                  type="button"
+                  className="date-nav-btn"
+                  onClick={() => setDateOffset(Math.max(0, dateOffset - 1))}
+                  disabled={dateOffset === 0}
+                >
+                  ‹
+                </button>
+                <div className="date-cards">
+                  {availableDates.slice(dateOffset, dateOffset + 5).map((date: Date, index: number) => {
+                    const isToday = date.toDateString() === new Date().toDateString();
+                    const isSelected = date.toDateString() === selectedDate.toDateString();
+                    const isPast = date < new Date() && !isToday;
+                    
+                    return (
+                      <div
+                        key={date.toISOString()}
+                        className={`date-card ${isSelected ? 'selected' : ''} ${isPast ? 'unavailable' : ''}`}
+                        onClick={() => !isPast && setSelectedDate(date)}
+                      >
+                        <div className="date-day">
+                          {isToday ? 'Vandaag' : date.toLocaleDateString('nl-NL', { weekday: 'short' })}
+                        </div>
+                        <div className="date-number">{date.getDate()}</div>
+                        <div className="date-month">
+                          {date.toLocaleDateString('nl-NL', { month: 'short' }).toUpperCase()}
+                        </div>
+                        {isPast && (
+                          <div className="date-status">Niet beschikbaar</div>
+                        )}
                       </div>
-                      <div className="date-number">{date.getDate()}</div>
-                      <div className="date-month">
-                        {date.toLocaleDateString('nl-NL', { month: 'short' }).toUpperCase()}
-                      </div>
-                      {isPast && (
-                        <div className="date-status">Niet beschikbaar</div>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+                <button 
+                  type="button"
+                  className="date-nav-btn"
+                  onClick={() => setDateOffset(Math.min(availableDates.length - 5, dateOffset + 1))}
+                  disabled={dateOffset >= availableDates.length - 5}
+                >
+                  ›
+                </button>
               </div>
             </div>
           </div>
