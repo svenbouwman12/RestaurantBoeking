@@ -224,7 +224,7 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
   };
 
   const deleteTable = async (tableId: string) => {
-    if (!confirm('Weet je zeker dat je deze tafel wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) {
+    if (!window.confirm('Weet je zeker dat je deze tafel wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) {
       return;
     }
 
