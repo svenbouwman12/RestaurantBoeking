@@ -146,7 +146,7 @@ const CustomerReservation: React.FC = () => {
     } finally {
       setCheckingAvailability(false);
     }
-  }, [selectedDate, formData.guests]);
+  }, [selectedDate, formData.guests, timeSlots]);
 
   const checkAvailability = useCallback(async () => {
     setLoading(true);
@@ -263,9 +263,6 @@ const CustomerReservation: React.FC = () => {
     setCurrentStep('details');
   };
 
-  const goToStep = (step: 'guests' | 'date' | 'time' | 'details') => {
-    setCurrentStep(step);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
