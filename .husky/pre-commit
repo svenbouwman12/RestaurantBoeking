@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Check for duplicate declarations and syntax errors
-echo "🔍 Checking for duplicate declarations and syntax errors..."
+# Clean unused imports and check for errors
+echo "🧹 Cleaning unused imports and checking for errors..."
 
-# Run the fix-duplicates script
-if ! ./fix-duplicates.sh; then
-  echo "❌ Duplicate declarations or build errors detected!"
+# Run the clean-unused script
+if ! ./clean-unused.sh; then
+  echo "❌ Build errors detected!"
   echo "Please fix the issues before committing."
   exit 1
 fi

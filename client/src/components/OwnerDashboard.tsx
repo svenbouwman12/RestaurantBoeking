@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
@@ -56,7 +55,6 @@ interface Order {
 
 
 const OwnerDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
