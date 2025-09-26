@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
 import Settings from './components/Settings';
+import Menu from './components/Menu';
 import './App.css';
 
 function App() {
@@ -23,6 +24,13 @@ function App() {
                 />
               </div>
               <div className="nav-links">
+                <Link 
+                  to="/menu" 
+                  className={`nav-link ${currentView === 'menu' ? 'active' : ''}`}
+                  onClick={() => setCurrentView('menu')}
+                >
+                  Menu
+                </Link>
                 <Link 
                   to="/owner" 
                   className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
@@ -64,11 +72,12 @@ function App() {
         )}
 
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<CustomerReservation />} />
-            <Route path="/owner" element={<OwnerDashboard />} />
-            <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
-          </Routes>
+                <Routes>
+                  <Route path="/" element={<CustomerReservation />} />
+                  <Route path="/menu" element={<Menu />} />
+                  <Route path="/owner" element={<OwnerDashboard />} />
+                  <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
+                </Routes>
         </main>
 
         <footer className="footer">

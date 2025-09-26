@@ -71,6 +71,56 @@ INSERT INTO restaurant_settings (setting_key, setting_value, setting_type, descr
 ('max_advance_booking_days', '30', 'number', 'Maximaal aantal dagen vooruit reserveren'),
 ('min_advance_booking_hours', '2', 'number', 'Minimaal aantal uren vooruit reserveren');
 
+-- Menu items table
+CREATE TABLE menu_items (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
+    category VARCHAR(50) NOT NULL,
+    image_url TEXT,
+    is_vegetarian BOOLEAN DEFAULT FALSE,
+    is_spicy BOOLEAN DEFAULT FALSE,
+    prep_time_minutes INTEGER DEFAULT 15 CHECK (prep_time_minutes > 0),
+    allergens TEXT[] DEFAULT '{}',
+    is_available BOOLEAN DEFAULT TRUE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert sample menu items
+INSERT INTO menu_items (name, description, price, category, is_vegetarian, is_spicy, prep_time_minutes, allergens, sort_order) VALUES
+-- Voorgerechten
+('Hummus met Pita', 'Cremige hummus met verse pita brood en olijfolie', 8.50, 'Voorgerechten', TRUE, FALSE, 10, '{"gluten", "sesam"}', 1),
+('Falafel Mix', 'Krokante falafel balletjes met tahini saus', 9.50, 'Voorgerechten', TRUE, FALSE, 15, '{"gluten", "sesam"}', 2),
+('Baba Ganoush', 'Geroosterde aubergine dip met kruiden', 7.50, 'Voorgerechten', TRUE, FALSE, 12, '{"sesam"}', 3),
+('Gemengde Salade', 'Verse groenten met feta en olijfolie dressing', 6.50, 'Voorgerechten', TRUE, FALSE, 8, '{"melk"}', 4),
+
+-- Hoofdgerechten
+('Lams Kebab', 'Malse lamsreepjes met rijst en groenten', 18.50, 'Hoofdgerechten', FALSE, FALSE, 25, '{}', 1),
+('Kip Shawarma', 'Gekruide kip met hummus en verse groenten', 16.50, 'Hoofdgerechten', FALSE, FALSE, 20, '{"gluten", "sesam"}', 2),
+('Vegetarische Moussaka', 'Lagen van aubergine, courgette en kaas', 15.50, 'Hoofdgerechten', TRUE, FALSE, 30, '{"melk", "eieren"}', 3),
+('Zalm met Couscous', 'Gegrilde zalm met kruidige couscous', 19.50, 'Hoofdgerechten', FALSE, FALSE, 22, '{"vis"}', 4),
+('Lentil Curry', 'Pittige linzen curry met basmati rijst', 14.50, 'Hoofdgerechten', TRUE, TRUE, 18, '{}', 5),
+
+-- Desserts
+('Baklava', 'Zoete noten pastei met honing', 6.50, 'Desserts', TRUE, FALSE, 5, '{"gluten", "noten"}', 1),
+('Tiramisu', 'Klassieke Italiaanse dessert', 7.50, 'Desserts', TRUE, FALSE, 8, '{"melk", "eieren", "gluten"}', 2),
+('Fruit Salade', 'Verse seizoensfruit met munt', 5.50, 'Desserts', TRUE, FALSE, 5, '{}', 3),
+('Chocolate Mousse', 'Romige chocolade mousse', 6.50, 'Desserts', TRUE, FALSE, 6, '{"melk", "eieren"}', 4),
+
+-- Dranken
+('Verse Muntthee', 'Warme muntthee met honing', 3.50, 'Dranken', TRUE, FALSE, 3, '{}', 1),
+('Turkse Koffie', 'Traditionele Turkse koffie', 4.50, 'Dranken', TRUE, FALSE, 5, '{}', 2),
+('Verse Sinaasappelsap', 'Vers geperst sinaasappelsap', 4.00, 'Dranken', TRUE, FALSE, 2, '{}', 3),
+('Rode Wijn (Huis)', 'Huiswijn per glas', 6.50, 'Dranken', TRUE, FALSE, 1, '{"sulfieten"}', 4),
+('Bier (Lokaal)', 'Lokaal gebrouwen bier', 4.50, 'Dranken', TRUE, FALSE, 1, '{"gluten"}', 5),
+
+-- Specials
+('Chef Special', 'Dagelijks wisselend gerecht van de chef', 22.50, 'Specials', FALSE, FALSE, 35, '{}', 1),
+('Vegetarische Platter', 'Grote platter met diverse vegetarische gerechten', 17.50, 'Specials', TRUE, FALSE, 20, '{"gluten", "sesam", "melk"}', 2);
+
 -- Create indexes for better performance
 CREATE INDEX idx_reservations_date ON reservations(date);
 CREATE INDEX idx_reservations_table_id ON reservations(table_id);
@@ -78,6 +128,8 @@ CREATE INDEX idx_reservations_status ON reservations(status);
 CREATE INDEX idx_orders_reservation_id ON orders(reservation_id);
 CREATE INDEX idx_restaurant_settings_key ON restaurant_settings(setting_key);
 CREATE INDEX idx_orders_status ON orders(status);
+CREATE INDEX idx_menu_items_category ON menu_items(category);
+CREATE INDEX idx_menu_items_available ON menu_items(is_available);
 
 -- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
