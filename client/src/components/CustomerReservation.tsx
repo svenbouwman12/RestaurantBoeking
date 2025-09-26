@@ -11,7 +11,6 @@ interface Table {
 }
 
 interface ReservationData {
-  table_id: string;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
@@ -31,7 +30,6 @@ const CustomerReservation: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   const [formData, setFormData] = useState<ReservationData>({
-    table_id: '',
     customer_name: '',
     customer_email: '',
     customer_phone: '',
@@ -71,14 +69,24 @@ const CustomerReservation: React.FC = () => {
       const occupiedTableIds = occupiedReservations.map(r => r.table_id);
       const availableTables = allTables.filter(table => !occupiedTableIds.includes(table.id));
       
+      // Find the best table for the number of guests
+      const suitableTables = availableTables.filter(table => table.seats >= formData.guests);
+      const bestTable = suitableTables.sort((a, b) => a.seats - b.seats)[0]; // Smallest suitable table
+      
       setAvailableTables(availableTables);
+      
+      if (bestTable) {
+        setFormData(prev => ({ ...prev, table_id: bestTable.id }));
+      } else {
+        setFormData(prev => ({ ...prev, table_id: '' }));
+      }
     } catch (error) {
       console.error('Error checking availability:', error);
       setError('Error checking table availability');
     } finally {
       setLoading(false);
     }
-  }, [selectedDate]);
+  }, [selectedDate, formData.guests]);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
@@ -118,6 +126,13 @@ const CustomerReservation: React.FC = () => {
     setError('');
 
     try {
+      // Check if a table is available
+      if (!formData.table_id) {
+        setError('Geen tafel beschikbaar voor de geselecteerde datum en tijd. Probeer een andere tijd.');
+        setSubmitting(false);
+        return;
+      }
+
       const reservationData = {
         table_id: formData.table_id,
         customer_name: formData.customer_name,
@@ -143,7 +158,6 @@ const CustomerReservation: React.FC = () => {
       
       // Reset form
       setFormData({
-        table_id: '',
         customer_name: '',
         customer_email: '',
         customer_phone: '',
@@ -162,7 +176,8 @@ const CustomerReservation: React.FC = () => {
     }
   };
 
-  const filteredTables = availableTables.filter(table => table.seats >= formData.guests);
+  // Get the assigned table info for display
+  const assignedTable = availableTables.find(table => table.id === formData.table_id);
 
   if (success) {
     return (
@@ -170,7 +185,18 @@ const CustomerReservation: React.FC = () => {
         <div className="card text-center fade-in">
           <CheckCircle size={80} className="text-success" style={{ margin: '0 auto 2rem' }} />
           <h2 className="card-title text-success">Reservering Bevestigd!</h2>
-          <p className="text-lg">Bedankt voor je reservering. We kijken ernaar uit om je te verwelkomen!</p>
+          <p className="text-lg">Bedankt voor je reservering! Je tafel is automatisch toegewezen.</p>
+          {assignedTable && (
+            <div className="alert alert-info" style={{ margin: '1rem 0' }}>
+              <p><strong>Je tafel:</strong> {assignedTable.name} ({assignedTable.seats} plaatsen)</p>
+              <p><strong>Datum:</strong> {selectedDate.toLocaleDateString('nl-NL')}</p>
+              <p><strong>Tijd:</strong> {selectedTime}</p>
+              <p><strong>Gasten:</strong> {formData.guests}</p>
+            </div>
+          )}
+          <p className="text-muted">
+            Je ontvangt een bevestigingsmail op {formData.customer_email}.
+          </p>
           <button 
             className="btn btn-primary btn-lg mt-6"
             onClick={() => setSuccess(false)}
@@ -250,33 +276,22 @@ const CustomerReservation: React.FC = () => {
             </select>
           </div>
 
-          {/* Available Tables */}
+          {/* Table Assignment Status */}
           {loading ? (
             <div className="loading">Beschikbaarheid controleren...</div>
           ) : (
             <div className="form-group">
-              <label className="form-label">Beschikbare Tafels</label>
-              {filteredTables.length === 0 ? (
-                <p className="text-danger">Geen tafels beschikbaar voor de geselecteerde datum en tijd</p>
-              ) : (
-                <div className="grid grid-3">
-                  {filteredTables.map(table => (
-                    <div
-                      key={table.id}
-                      className={`card ${formData.table_id === table.id ? 'selected' : ''}`}
-                      style={{
-                        cursor: 'pointer',
-                        border: formData.table_id === table.id ? '2px solid #007bff' : '1px solid #ddd',
-                        backgroundColor: formData.table_id === table.id ? '#f8f9fa' : 'white'
-                      }}
-                      onClick={() => setFormData(prev => ({ ...prev, table_id: table.id }))}
-                    >
-                      <h4>{table.name}</h4>
-                      <p className="text-muted">{table.seats} plaatsen</p>
-                    </div>
-                  ))}
+              <label className="form-label">Tafel Toewijzing</label>
+              {!formData.table_id ? (
+                <div className="alert alert-warning">
+                  <p>Geen tafels beschikbaar voor de geselecteerde datum en tijd. Probeer een andere tijd.</p>
                 </div>
-              )}
+              ) : assignedTable ? (
+                <div className="alert alert-success">
+                  <p><strong>✅ Tafel toegewezen:</strong> {assignedTable.name} ({assignedTable.seats} plaatsen)</p>
+                  <p className="text-muted">Deze tafel is perfect geschikt voor {formData.guests} {formData.guests === 1 ? 'gast' : 'gasten'}.</p>
+                </div>
+              ) : null}
             </div>
           )}
 
