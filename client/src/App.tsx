@@ -25,13 +25,6 @@ function App() {
               </div>
               <div className="nav-links">
                 <Link 
-                  to="/menu" 
-                  className={`nav-link ${currentView === 'menu' ? 'active' : ''}`}
-                  onClick={() => setCurrentView('menu')}
-                >
-                  Menu
-                </Link>
-                <Link 
                   to="/owner" 
                   className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
                   onClick={() => setCurrentView('owner')}
@@ -62,9 +55,14 @@ function App() {
                   >
                     Direct Reserveren
                   </button>
-                  <button className="btn btn-lg btn-secondary" style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '2px solid rgba(255,255,255,0.3)' }}>
+                  <Link 
+                    to="/menu" 
+                    className="btn btn-lg btn-secondary" 
+                    style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '2px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}
+                    onClick={() => setCurrentView('menu')}
+                  >
                     Bekijk Menu
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
