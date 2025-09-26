@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Utensils, Plus, Edit, Trash2, Save, X, Clock, Leaf, Flame, 
+  Utensils, Plus, Edit, Trash2, X, Clock, Leaf, Flame, 
   Eye, EyeOff, Search, Filter 
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
