@@ -280,6 +280,94 @@ p {
   transition: var(--transition);
 }
 
+/* Date and Time Selectors */
+.date-selector, .time-selector {
+  margin-top: 1rem;
+}
+
+.date-cards, .time-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.date-card, .time-card {
+  background: white;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 80px;
+  position: relative;
+}
+
+.date-card {
+  min-width: 100px;
+}
+
+.date-card:hover, .time-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.date-card.selected, .time-card.selected {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.date-card.unavailable {
+  background: var(--neutral-100);
+  color: var(--neutral-400);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.date-card.unavailable:hover {
+  transform: none;
+  border-color: var(--neutral-200);
+}
+
+.date-day {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.date-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.date-month {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.date-status {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--error-color);
+  color: white;
+  font-size: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+.time-card {
+  min-width: 60px;
+  font-weight: 600;
+}
+
 .card-header {
   border-bottom: 1px solid var(--neutral-200);
   padding-bottom: 1.5rem;

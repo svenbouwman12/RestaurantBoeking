@@ -24,6 +24,7 @@ interface ReservationData {
 const CustomerReservation: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('19:00');
+  const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [availableTables, setAvailableTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -45,6 +46,18 @@ const CustomerReservation: React.FC = () => {
     '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
     '20:00', '20:30', '21:00', '21:30', '22:00'
   ];
+
+  // Generate available dates (next 7 days)
+  const generateAvailableDates = () => {
+    const dates = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      dates.push(date);
+    }
+    setAvailableDates(dates);
+  };
 
   const checkAvailability = useCallback(async () => {
     setLoading(true);
@@ -89,6 +102,10 @@ const CustomerReservation: React.FC = () => {
       setLoading(false);
     }
   }, [selectedDate, formData.guests]);
+
+  useEffect(() => {
+    generateAvailableDates();
+  }, []);
 
   useEffect(() => {
     if (selectedDate && selectedTime) {
@@ -222,42 +239,60 @@ const CustomerReservation: React.FC = () => {
         {error && <div className="error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-2">
-            {/* Date Selection */}
-            <div className="form-group">
-              <label className="form-label">
-                <Calendar size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Selecteer Datum
-              </label>
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                minDate={new Date()}
-                maxDate={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)} // 30 days from now
-                dateFormat="MMMM d, yyyy"
-                className="form-input"
-                placeholderText="Selecteer een datum"
-              />
+          {/* Date Selection */}
+          <div className="form-group">
+            <label className="form-label">
+              <Calendar size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+              Kies datum:
+            </label>
+            <div className="date-selector">
+              <div className="date-cards">
+                {availableDates.slice(0, 3).map((date, index) => {
+                  const isToday = date.toDateString() === new Date().toDateString();
+                  const isSelected = date.toDateString() === selectedDate.toDateString();
+                  const isPast = date < new Date();
+                  
+                  return (
+                    <div
+                      key={date.toISOString()}
+                      className={`date-card ${isSelected ? 'selected' : ''} ${isPast ? 'unavailable' : ''}`}
+                      onClick={() => !isPast && setSelectedDate(date)}
+                    >
+                      <div className="date-day">
+                        {isToday ? 'Vandaag' : date.toLocaleDateString('nl-NL', { weekday: 'short' })}
+                      </div>
+                      <div className="date-number">{date.getDate()}</div>
+                      <div className="date-month">
+                        {date.toLocaleDateString('nl-NL', { month: 'short' }).toUpperCase()}
+                      </div>
+                      {isPast && (
+                        <div className="date-status">Niet beschikbaar</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          </div>
 
-            {/* Time Selection */}
-            <div className="form-group">
-              <label className="form-label">
-                <Clock size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Selecteer Tijd
-              </label>
-              <select
-                name="time"
-                value={selectedTime}
-                onChange={(e) => handleTimeChange(e.target.value)}
-                className="form-input"
-              >
+          {/* Time Selection */}
+          <div className="form-group">
+            <label className="form-label">
+              <Clock size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+              Kies tijd:
+            </label>
+            <div className="time-selector">
+              <div className="time-cards">
                 {timeSlots.map(time => (
-                  <option key={time} value={time}>
+                  <div
+                    key={time}
+                    className={`time-card ${selectedTime === time ? 'selected' : ''}`}
+                    onClick={() => handleTimeChange(time)}
+                  >
                     {new Date(`2000-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </option>
+                  </div>
                 ))}
-              </select>
+              </div>
             </div>
           </div>
 
