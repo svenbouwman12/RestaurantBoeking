@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Utensils, Star, Clock, Leaf, Flame } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Utensils, Clock, Leaf, Flame } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface MenuItem {
@@ -30,9 +30,9 @@ const Menu: React.FC = () => {
 
   useEffect(() => {
     fetchMenu();
-  }, []);
+  }, [fetchMenu]);
 
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -69,7 +69,7 @@ const Menu: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const getCategoryDescription = (categoryName: string): string => {
     const descriptions: { [key: string]: string } = {
