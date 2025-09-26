@@ -31,7 +31,7 @@ const CustomerReservation: React.FC = () => {
   const [error, setError] = useState<string>('');
   
   // New flow state
-  const [currentStep, setCurrentStep] = useState<'guests' | 'date' | 'time' | 'details'>('guests');
+  const [currentStep, setCurrentStep] = useState<'guests' | 'date' | 'details'>('guests');
   const [timeAvailability, setTimeAvailability] = useState<{[key: string]: boolean}>({});
   const [checkingAvailability, setCheckingAvailability] = useState(false);
 
@@ -250,6 +250,10 @@ const CustomerReservation: React.FC = () => {
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
+    // Automatically check time availability when date is selected
+    if (formData.guests > 0) {
+      checkTimeAvailability();
+    }
   };
 
   const handleTimeChange = (time: string) => {
@@ -359,20 +363,16 @@ const CustomerReservation: React.FC = () => {
           
           {/* Progress Steps */}
           <div className="flex" style={{ justifyContent: 'center', marginTop: '1.5rem', gap: '1rem' }}>
-            <div className={`step ${currentStep === 'guests' ? 'active' : currentStep === 'date' || currentStep === 'time' || currentStep === 'details' ? 'completed' : ''}`}>
+            <div className={`step ${currentStep === 'guests' ? 'active' : currentStep === 'date' || currentStep === 'details' ? 'completed' : ''}`}>
               <div className="step-number">1</div>
               <div className="step-label">Gasten</div>
             </div>
-            <div className={`step ${currentStep === 'date' ? 'active' : currentStep === 'time' || currentStep === 'details' ? 'completed' : ''}`}>
+            <div className={`step ${currentStep === 'date' ? 'active' : currentStep === 'details' ? 'completed' : ''}`}>
               <div className="step-number">2</div>
-              <div className="step-label">Datum</div>
-            </div>
-            <div className={`step ${currentStep === 'time' ? 'active' : currentStep === 'details' ? 'completed' : ''}`}>
-              <div className="step-number">3</div>
-              <div className="step-label">Tijd</div>
+              <div className="step-label">Datum & Tijd</div>
             </div>
             <div className={`step ${currentStep === 'details' ? 'active' : ''}`}>
-              <div className="step-number">4</div>
+              <div className="step-number">3</div>
               <div className="step-label">Details</div>
             </div>
           </div>
@@ -466,12 +466,64 @@ const CustomerReservation: React.FC = () => {
                   </button>
                 </div>
               </div>
+              {/* Show time selection directly under date selection */}
+              {selectedDate && formData.guests > 0 && (
+                <div style={{ marginTop: '2rem' }}>
+                  <label className="form-label">
+                    <Clock size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                    Beschikbare tijden voor {selectedDate.toLocaleDateString('nl-NL')}:
+                  </label>
+                  {checkingAvailability && (
+                    <div className="loading" style={{ textAlign: 'center', padding: '1rem' }}>
+                      Beschikbaarheid controleren...
+                    </div>
+                  )}
+                  <div className="time-selector">
+                    <div className="time-cards">
+                      {timeSlots.map(time => {
+                        const isAvailable = timeAvailability[time];
+                        const isSelected = selectedTime === time;
+                        
+                        return (
+                          <div
+                            key={time}
+                            className={`time-card ${isSelected ? 'selected' : ''} ${!isAvailable ? 'unavailable' : ''}`}
+                            onClick={() => isAvailable && handleTimeChange(time)}
+                            style={{
+                              opacity: !isAvailable ? 0.5 : 1,
+                              cursor: !isAvailable ? 'not-allowed' : 'pointer',
+                              position: 'relative'
+                            }}
+                          >
+                            {new Date(`2000-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {!isAvailable && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                fontSize: '0.7rem',
+                                color: '#ef4444',
+                                fontWeight: '600',
+                                textAlign: 'center'
+                              }}>
+                                Vol
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex" style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <button
                   type="button"
                   className="btn btn-primary"
-                  onClick={() => setCurrentStep('time')}
-                  disabled={!selectedDate}
+                  onClick={() => setCurrentStep('details')}
+                  disabled={!selectedDate || !selectedTime}
                 >
                   Volgende →
                 </button>
@@ -479,67 +531,6 @@ const CustomerReservation: React.FC = () => {
             </div>
           )}
 
-          {/* Step 3: Time Selection */}
-          {currentStep === 'time' && (
-            <div className="form-group">
-              <label className="form-label">
-                <Clock size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                Kies tijd:
-              </label>
-              {checkingAvailability && (
-                <div className="loading" style={{ textAlign: 'center', padding: '1rem' }}>
-                  Beschikbaarheid controleren...
-                </div>
-              )}
-              <div className="time-selector">
-                <div className="time-cards">
-                  {timeSlots.map(time => {
-                    const isAvailable = timeAvailability[time];
-                    const isSelected = selectedTime === time;
-                    
-                    return (
-                      <div
-                        key={time}
-                        className={`time-card ${isSelected ? 'selected' : ''} ${!isAvailable ? 'unavailable' : ''}`}
-                        onClick={() => isAvailable && handleTimeChange(time)}
-                        style={{
-                          opacity: !isAvailable ? 0.5 : 1,
-                          cursor: !isAvailable ? 'not-allowed' : 'pointer',
-                          position: 'relative'
-                        }}
-                      >
-                        {new Date(`2000-01-01T${time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        {!isAvailable && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            fontSize: '0.7rem',
-                            color: '#ef4444',
-                            fontWeight: '600',
-                            textAlign: 'center'
-                          }}>
-                            Vol
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="flex" style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => setCurrentStep('details')}
-                  disabled={!selectedTime}
-                >
-                  Volgende →
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Step 4: Customer Details */}
           {currentStep === 'details' && (
@@ -639,15 +630,14 @@ const CustomerReservation: React.FC = () => {
                 className="btn btn-secondary"
                 onClick={() => {
                   if (currentStep === 'date') setCurrentStep('guests');
-                  if (currentStep === 'time') setCurrentStep('date');
-                  if (currentStep === 'details') setCurrentStep('time');
+                  if (currentStep === 'details') setCurrentStep('date');
                 }}
               >
                 ← Terug
               </button>
               {currentStep === 'details' && (
                 <div style={{ color: 'var(--neutral-500)', fontSize: '0.9rem', alignSelf: 'center' }}>
-                  Stap 4 van 4
+                  Stap 3 van 3
                 </div>
               )}
             </div>
