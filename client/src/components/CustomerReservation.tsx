@@ -391,25 +391,15 @@ const CustomerReservation: React.FC = () => {
                 <Users size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                 Aantal Gasten
               </label>
-              <div className="grid grid-2">
+              <div className="guests-grid">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(guests => (
                   <button
                     key={guests}
                     type="button"
-                    className={`btn ${formData.guests === guests ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`guest-btn ${formData.guests === guests ? 'active' : ''}`}
                     onClick={() => handleGuestsChange(guests)}
-                    style={{ 
-                      padding: '1rem',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      borderRadius: '12px',
-                      border: formData.guests === guests ? '2px solid var(--primary-color)' : '2px solid var(--neutral-200)',
-                      background: formData.guests === guests ? 'var(--primary-color)' : 'white',
-                      color: formData.guests === guests ? 'white' : 'var(--neutral-700)',
-                      transition: 'all 0.2s ease'
-                    }}
                   >
-                    {guests} {guests === 1 ? 'Gast' : 'Gasten'}
+                    {guests}
                   </button>
                 ))}
               </div>
