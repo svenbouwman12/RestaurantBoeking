@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
+import Settings from './components/Settings';
 import './App.css';
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
           <Routes>
             <Route path="/" element={<CustomerReservation />} />
             <Route path="/owner" element={<OwnerDashboard />} />
+            <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
           </Routes>
         </main>
 
