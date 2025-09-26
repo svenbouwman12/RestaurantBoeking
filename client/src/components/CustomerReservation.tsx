@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -46,10 +46,10 @@ const CustomerReservation: React.FC = () => {
     notes: ''
   });
 
-  const timeSlots = [
+  const timeSlots = useMemo(() => [
     '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
     '20:00', '20:30', '21:00', '21:30', '22:00'
-  ];
+  ], []);
 
   // Generate available dates (next 30 days)
   const generateAvailableDates = useCallback(() => {
