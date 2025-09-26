@@ -239,7 +239,7 @@ const CustomerReservation: React.FC = () => {
                 {availableDates.slice(0, 3).map((date: Date, index: number) => {
                   const isToday = date.toDateString() === new Date().toDateString();
                   const isSelected = date.toDateString() === selectedDate.toDateString();
-                  const isPast = date < new Date();
+                  const isPast = date < new Date() && !isToday;
                   
                   return (
                     <div
