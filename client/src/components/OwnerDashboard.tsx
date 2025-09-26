@@ -82,7 +82,6 @@ const OwnerDashboard: React.FC = () => {
   
   // Settings state
   const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState<RestaurantSetting[]>([]);
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
   const [defaultDuration, setDefaultDuration] = useState(2);
   const [defaultBuffer, setDefaultBuffer] = useState(15);
@@ -154,8 +153,6 @@ const OwnerDashboard: React.FC = () => {
         .order('setting_key');
       
       if (error) throw error;
-      
-      setSettings(data);
       
       // Parse opening hours
       const hours: {[key: string]: OpeningHours} = {};
