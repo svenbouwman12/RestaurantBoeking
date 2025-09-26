@@ -151,7 +151,7 @@ const CustomerReservation: React.FC = () => {
         date: selectedDate.toISOString().split('T')[0],
         time: selectedTime,
         notes: formData.notes,
-        status: 'pending'
+        status: 'confirmed'
       };
 
       const { data, error } = await supabase

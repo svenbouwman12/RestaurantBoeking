@@ -191,7 +191,7 @@ app.post('/api/reservations', async (req, res) => {
         date,
         time,
         notes,
-        status: 'pending'
+        status: 'confirmed'
       }])
       .select(`
         *,
@@ -313,7 +313,7 @@ app.post('/api/orders', async (req, res) => {
         item_type: item_type || 'food',
         quantity,
         price: price || 0.00,
-        status: 'pending'
+        status: 'confirmed'
       }])
       .select()
       .single();
