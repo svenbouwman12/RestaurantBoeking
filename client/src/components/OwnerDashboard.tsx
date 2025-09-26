@@ -20,6 +20,7 @@ import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
 import TableManagement from './TableManagement';
 import Settings from './Settings';
+import PhoneOrders from './PhoneOrders';
 
 interface Table {
   id: string;
@@ -46,11 +47,17 @@ interface Reservation {
 interface Order {
   id: string;
   reservation_id: string;
-  item_name: string;
-  item_type: string;
-  quantity: number;
-  price: number;
+  table_id: string;
   status: string;
+  total_amount: number;
+  items: Array<{
+    menu_item_id: string;
+    quantity: number;
+    notes?: string;
+    price: number;
+  }>;
+  notes?: string;
+  created_at: string;
 }
 
 
@@ -118,8 +125,23 @@ const OwnerDashboard: React.FC = () => {
       
       if (reservationsError) throw reservationsError;
       
+      // Fetch orders for selected date
+      const { data: ordersData, error: ordersError } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          reservations!inner (
+            date
+          )
+        `)
+        .eq('reservations.date', selectedDate)
+        .order('created_at', { ascending: false });
+      
+      if (ordersError) throw ordersError;
+      
       setTables(tablesData);
       setReservations(reservationsData);
+      setOrders(ordersData);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Error loading data');
@@ -314,6 +336,13 @@ const OwnerDashboard: React.FC = () => {
               Tafel Beheer
             </button>
             <button
+              className={`tab-btn ${currentTab === 'phone' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('phone')}
+            >
+              <Phone size={16} style={{ marginRight: '8px' }} />
+              Telefoon Bestellingen
+            </button>
+            <button
               className={`tab-btn ${currentTab === 'settings' ? 'active' : ''}`}
               onClick={() => setCurrentTab('settings')}
             >
@@ -392,6 +421,10 @@ const OwnerDashboard: React.FC = () => {
               {tables.map(table => {
                 const status = getTableStatus(table.id);
                 const color = getTableColor(status);
+                const reservation = reservations.find(r => r.table_id === table.id);
+                const tableOrders = orders.filter(o => o.table_id === table.id);
+                const hasOrders = tableOrders.length > 0;
+                
                 return (
                   <div
                     key={table.id}
@@ -413,7 +446,8 @@ const OwnerDashboard: React.FC = () => {
                       fontSize: '12px',
                       fontWeight: 'bold',
                       boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                      transition: 'transform 0.2s ease'
+                      transition: 'transform 0.2s ease',
+                      border: hasOrders ? '3px solid #f59e0b' : 'none'
                     }}
                     onClick={() => handleTableClick(table)}
                     onMouseEnter={(e) => {
@@ -433,6 +467,17 @@ const OwnerDashboard: React.FC = () => {
                        status === 'completed' ? 'voltooid' :
                        status === 'cancelled' ? 'geannuleerd' : status}
                     </div>
+                    {hasOrders && (
+                      <div style={{ 
+                        fontSize: '8px', 
+                        marginTop: '2px',
+                        backgroundColor: 'rgba(245, 158, 11, 0.9)',
+                        padding: '1px 4px',
+                        borderRadius: '8px'
+                      }}>
+                        {tableOrders.length} bestelling{tableOrders.length > 1 ? 'en' : ''}
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -540,6 +585,52 @@ const OwnerDashboard: React.FC = () => {
                 <h4>{selectedTable.name}</h4>
                 <p>Plaatsen: {selectedTable.seats}</p>
                 <p className="text-success">Beschikbaar</p>
+                
+                {/* Show orders for this table */}
+                {orders.filter(o => o.table_id === selectedTable.id).length > 0 && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <h5>Bestellingen:</h5>
+                    {orders.filter(o => o.table_id === selectedTable.id).map(order => (
+                      <div key={order.id} style={{ 
+                        background: '#f8f9fa', 
+                        padding: '0.75rem', 
+                        borderRadius: '8px', 
+                        marginBottom: '0.5rem',
+                        border: '1px solid #e9ecef'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: '600' }}>Order #{order.id.slice(-6)}</span>
+                          <span style={{ 
+                            padding: '0.25rem 0.5rem', 
+                            borderRadius: '4px', 
+                            fontSize: '0.8rem',
+                            backgroundColor: order.status === 'pending' ? '#fff3cd' : 
+                                           order.status === 'confirmed' ? '#d1ecf1' :
+                                           order.status === 'preparing' ? '#f8d7da' :
+                                           order.status === 'ready' ? '#d4edda' : '#e2e3e5',
+                            color: order.status === 'pending' ? '#856404' :
+                                   order.status === 'confirmed' ? '#0c5460' :
+                                   order.status === 'preparing' ? '#721c24' :
+                                   order.status === 'ready' ? '#155724' : '#6c757d'
+                          }}>
+                            {order.status === 'pending' ? 'In behandeling' :
+                             order.status === 'confirmed' ? 'Bevestigd' :
+                             order.status === 'preparing' ? 'Bereiden' :
+                             order.status === 'ready' ? 'Klaar' :
+                             order.status === 'served' ? 'Geserveerd' : order.status}
+                          </span>
+                        </div>
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <strong>€{order.total_amount.toFixed(2)}</strong>
+                          <div style={{ fontSize: '0.9rem', color: '#6c757d', marginTop: '0.25rem' }}>
+                            {order.items.length} item{order.items.length > 1 ? 's' : ''}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 <button 
                   className="btn btn-primary"
                   onClick={() => {
@@ -608,6 +699,13 @@ const OwnerDashboard: React.FC = () => {
         {currentTab === 'tables' && (
           <div className="tab-content">
             <TableManagement onBack={() => setCurrentTab('dashboard')} />
+          </div>
+        )}
+
+        {/* Phone Orders Tab */}
+        {currentTab === 'phone' && (
+          <div className="tab-content">
+            <PhoneOrders onBack={() => setCurrentTab('dashboard')} />
           </div>
         )}
 

@@ -36,11 +36,11 @@ CREATE TABLE reservations (
 CREATE TABLE orders (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     reservation_id UUID REFERENCES reservations(id) ON DELETE CASCADE,
-    item_name VARCHAR(100) NOT NULL,
-    item_type VARCHAR(20) DEFAULT 'food' CHECK (item_type IN ('food', 'drink', 'dessert')),
-    quantity INTEGER NOT NULL CHECK (quantity > 0),
-    price DECIMAL(10,2) DEFAULT 0.00,
-    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'preparing', 'ready', 'served', 'cancelled')),
+    table_id UUID REFERENCES tables(id) ON DELETE CASCADE,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'preparing', 'ready', 'served', 'cancelled')),
+    total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    items JSONB NOT NULL DEFAULT '[]'::jsonb,
+    notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -176,11 +176,13 @@ INSERT INTO reservations (table_id, customer_name, customer_email, customer_phon
 ((SELECT id FROM tables WHERE name = 'Table 3'), 'Bob Johnson', 'bob@example.com', '+1234567892', 2, CURRENT_DATE + INTERVAL '1 day', '18:00:00', 'pending', 'Business dinner');
 
 -- Insert sample orders
-INSERT INTO orders (reservation_id, item_name, item_type, quantity, price, status) VALUES
-((SELECT id FROM reservations WHERE customer_name = 'John Doe'), 'Grilled Salmon', 'food', 2, 28.00, 'served'),
-((SELECT id FROM reservations WHERE customer_name = 'John Doe'), 'House Wine', 'drink', 1, 12.00, 'served'),
-((SELECT id FROM reservations WHERE customer_name = 'Jane Smith'), 'Caesar Salad', 'food', 4, 15.00, 'preparing'),
-((SELECT id FROM reservations WHERE customer_name = 'Jane Smith'), 'Sparkling Water', 'drink', 4, 4.00, 'served');
+INSERT INTO orders (reservation_id, table_id, status, total_amount, items, notes) VALUES
+((SELECT id FROM reservations WHERE customer_name = 'John Doe'), (SELECT table_id FROM reservations WHERE customer_name = 'John Doe'), 'served', 40.00, 
+ '[{"menu_item_id": "1", "quantity": 2, "notes": "Medium rare", "price": 18.50}, {"menu_item_id": "2", "quantity": 1, "notes": "House wine", "price": 12.00}]'::jsonb, 
+ 'Telefoon bestelling - John Doe'),
+((SELECT id FROM reservations WHERE customer_name = 'Jane Smith'), (SELECT table_id FROM reservations WHERE customer_name = 'Jane Smith'), 'preparing', 19.00, 
+ '[{"menu_item_id": "3", "quantity": 4, "notes": "Extra dressing", "price": 15.00}, {"menu_item_id": "4", "quantity": 4, "notes": "Sparkling water", "price": 4.00}]'::jsonb, 
+ 'Telefoon bestelling - Jane Smith');
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE tables ENABLE ROW LEVEL SECURITY;
