@@ -14,8 +14,12 @@ function App() {
           <div className="container">
             <div className="nav-content">
               <div className="nav-brand">
-                <img src="/zaytun logo.svg" alt="Zaytun Logo" className="nav-logo" />
-                <h1 className="nav-title">Tafel Reserveren</h1>
+                <img 
+                  src="/zaytun logo.svg" 
+                  alt="Zaytun Logo" 
+                  className="nav-logo clickable-logo"
+                  onClick={() => setCurrentView('customer')}
+                />
               </div>
               <div className="nav-links">
                 <Link 

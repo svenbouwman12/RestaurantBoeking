@@ -90,13 +90,16 @@
   width: auto;
 }
 
-.nav-title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  margin: 0;
-  color: var(--primary-color);
-  letter-spacing: -0.025em;
+.clickable-logo {
+  cursor: pointer;
+  transition: var(--transition);
 }
+
+.clickable-logo:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
 
 .nav-links {
   display: flex;
