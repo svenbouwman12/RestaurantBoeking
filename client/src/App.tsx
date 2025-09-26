@@ -17,7 +17,7 @@ function App() {
             <div className="nav-content">
               <div className="nav-brand">
                 <img 
-                  src="/zaytun logo.svg" 
+                  src="/zaytun-logo.svg" 
                   alt="Zaytun Logo" 
                   className="nav-logo clickable-logo"
                   onClick={() => setCurrentView('customer')}
