@@ -54,9 +54,11 @@ interface Order {
 }
 
 
+type TabType = 'dashboard' | 'menu' | 'tables';
+
 const OwnerDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [currentTab, setCurrentTab] = useState<'dashboard' | 'menu' | 'tables'>('dashboard');
+  const [currentTab, setCurrentTab] = useState<TabType>('dashboard');
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
