@@ -5,7 +5,8 @@ import {
   ArrowLeft,
   Clock,
   Calendar,
-  Utensils
+  Utensils,
+  Building
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
