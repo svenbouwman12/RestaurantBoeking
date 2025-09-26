@@ -90,7 +90,8 @@ CREATE TABLE menu_items (
 );
 
 -- Insert sample menu items
-INSERT INTO menu_items (name, description, price, category, is_vegetarian, is_spicy, prep_time_minutes, allergens, sort_order) VALUES
+INSERT INTO menu_items (name, description, price, category, is_vegetarian, is_spicy, prep_time_minutes, allergens, sort_order) 
+SELECT * FROM (VALUES
 -- Voorgerechten
 ('Hummus met Pita', 'Cremige hummus met verse pita brood en olijfolie', 8.50, 'Voorgerechten', TRUE, FALSE, 10, '{"gluten", "sesam"}', 1),
 ('Falafel Mix', 'Krokante falafel balletjes met tahini saus', 9.50, 'Voorgerechten', TRUE, FALSE, 15, '{"gluten", "sesam"}', 2),
@@ -119,7 +120,13 @@ INSERT INTO menu_items (name, description, price, category, is_vegetarian, is_sp
 
 -- Specials
 ('Chef Special', 'Dagelijks wisselend gerecht van de chef', 22.50, 'Specials', FALSE, FALSE, 35, '{}', 1),
-('Vegetarische Platter', 'Grote platter met diverse vegetarische gerechten', 17.50, 'Specials', TRUE, FALSE, 20, '{"gluten", "sesam", "melk"}', 2);
+('Vegetarische Platter', 'Grote platter met diverse vegetarische gerechten', 17.50, 'Specials', TRUE, FALSE, 20, '{"gluten", "sesam", "melk"}', 2)
+) AS new_items(name, description, price, category, is_vegetarian, is_spicy, prep_time_minutes, allergens, sort_order)
+WHERE NOT EXISTS (
+    SELECT 1 FROM menu_items 
+    WHERE menu_items.name = new_items.name 
+    AND menu_items.category = new_items.category
+);
 
 -- Create indexes for better performance
 CREATE INDEX idx_reservations_date ON reservations(date);
