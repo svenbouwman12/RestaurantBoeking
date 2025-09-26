@@ -55,6 +55,7 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pin, setPin] = useState('');
   const [pinError, setPinError] = useState<string>('');
+  const [showMenu, setShowMenu] = useState(false);
 
   // PIN verification
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -141,6 +142,7 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
     setOrderItems([]);
     setError('');
     setSuccess('');
+    setShowMenu(true);
   };
 
   // Handle menu item add
@@ -188,6 +190,16 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
   // Calculate total
   const calculateTotal = () => {
     return orderItems.reduce((total, item) => total + (item.menu_item.price * item.quantity), 0);
+  };
+
+  // Handle back to table selection
+  const handleBackToTables = () => {
+    setShowMenu(false);
+    setSelectedTable(null);
+    setCurrentReservation(null);
+    setOrderItems([]);
+    setError('');
+    setSuccess('');
   };
 
   // Handle order confirmation
@@ -308,18 +320,18 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
         </button>
         <h1 className="phone-orders-title">
           <Phone size={24} style={{ marginRight: '12px' }} />
-          Telefoon Bestellingen
+          Bestelling Opnemen
         </h1>
       </div>
 
       {error && <div className="error">{error}</div>}
       {success && <div className="success">{success}</div>}
 
-      <div className="phone-orders-content">
-        {/* Tables Overview */}
-        <div className="tables-section">
-          <h2>Tafels Overzicht</h2>
-          <div className="tables-grid">
+      {!showMenu ? (
+        /* Tables Overview */
+        <div className="tables-section-centered">
+          <h2>Kies een Tafel</h2>
+          <div className="tables-grid-centered">
             {tables.map(table => {
               const status = getTableStatus(table.id);
               const reservation = getReservationForTable(table.id);
@@ -327,7 +339,7 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
               return (
                 <div
                   key={table.id}
-                  className={`table-card ${status} ${selectedTable?.id === table.id ? 'selected' : ''}`}
+                  className={`table-card-centered ${status}`}
                   onClick={() => handleTableSelect(table)}
                 >
                   <div className="table-header">
@@ -343,14 +355,14 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
                     <div className="reservation-info">
                       <div className="reservation-detail">
                         <Users size={16} />
-                        <span>{reservation.customer_name} ({reservation.guests} personen)</span>
+                        <span>{reservation.customer_name}</span>
                       </div>
                       <div className="reservation-detail">
                         <Clock size={16} />
                         <span>{reservation.time}</span>
                       </div>
                       <div className="reservation-detail">
-                        <span>Tel: {reservation.customer_phone}</span>
+                        <span>{reservation.guests} personen</span>
                       </div>
                     </div>
                   )}
@@ -359,121 +371,127 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
             })}
           </div>
         </div>
-
-        {/* Order Interface */}
-        {selectedTable && currentReservation && (
-          <div className="order-section">
-            <div className="order-header">
-              <h2>Bestelling voor {selectedTable.name}</h2>
-              <p>{currentReservation.customer_name} - {currentReservation.guests} personen</p>
-            </div>
-
-            <div className="order-content">
-              {/* Menu Search */}
-              <div className="menu-search">
-                <div className="search-bar">
-                  <Search size={20} />
-                  <input
-                    type="text"
-                    placeholder="Zoek menu items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                
-                <div className="category-filter">
-                  {categories.map(category => (
-                    <button
-                      key={category}
-                      className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category === 'all' ? 'Alle' : category}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Menu Items */}
-              <div className="menu-items">
-                {filteredMenuItems.map(item => (
-                  <div key={item.id} className="menu-item-card">
-                    <div className="menu-item-info">
-                      <h4>{item.name}</h4>
-                      <p>{item.description}</p>
-                      <div className="menu-item-meta">
-                        <span className="price">€{item.price.toFixed(2)}</span>
-                        {item.allergens.length > 0 && (
-                          <span className="allergens">
-                            {item.allergens.join(', ')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => handleAddMenuItem(item)}
-                    >
-                      <Plus size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Order Items */}
-              {orderItems.length > 0 && (
-                <div className="order-items">
-                  <h3>Bestelling</h3>
-                  {orderItems.map(item => (
-                    <div key={item.menu_item.id} className="order-item">
-                      <div className="order-item-info">
-                        <h4>{item.menu_item.name}</h4>
-                        <p>€{item.menu_item.price.toFixed(2)} per stuk</p>
-                        <textarea
-                          placeholder="Opmerkingen..."
-                          value={item.notes}
-                          onChange={(e) => handleNotesChange(item.menu_item.id, e.target.value)}
-                          rows={2}
-                        />
-                      </div>
-                      <div className="order-item-controls">
-                        <div className="quantity-controls">
-                          <button
-                            onClick={() => handleQuantityChange(item.menu_item.id, item.quantity - 1)}
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span>{item.quantity}</span>
-                          <button
-                            onClick={() => handleQuantityChange(item.menu_item.id, item.quantity + 1)}
-                          >
-                            <Plus size={16} />
-                          </button>
-                        </div>
-                        <div className="item-total">
-                          €{(item.menu_item.price * item.quantity).toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  <div className="order-total">
-                    <h3>Totaal: €{calculateTotal().toFixed(2)}</h3>
-                    <button
-                      className="btn btn-primary btn-lg"
-                      onClick={handleConfirmOrder}
-                      disabled={loading}
-                    >
-                      <Check size={20} style={{ marginRight: '8px' }} />
-                      Bestelling Bevestigen
-                    </button>
-                  </div>
-                </div>
+      ) : (
+        /* Menu Interface */
+        <div className="menu-interface-centered">
+          <div className="menu-header">
+            <button className="btn btn-secondary" onClick={handleBackToTables}>
+              <ArrowLeft size={20} style={{ marginRight: '8px' }} />
+              Terug naar Tafels
+            </button>
+            <div className="table-info">
+              <h2>{selectedTable?.name}</h2>
+              {currentReservation && (
+                <p>{currentReservation.customer_name} - {currentReservation.guests} personen</p>
               )}
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="menu-content">
+            {/* Menu Search */}
+            <div className="menu-search">
+              <div className="search-bar">
+                <Search size={20} />
+                <input
+                  type="text"
+                  placeholder="Zoek menu items..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              
+              <div className="category-filter">
+                {categories.map(category => (
+                  <button
+                    key={category}
+                    className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category === 'all' ? 'Alle' : category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Menu Items */}
+            <div className="menu-items-grid">
+              {filteredMenuItems.map(item => (
+                <div key={item.id} className="menu-item-card">
+                  <div className="menu-item-info">
+                    <h4>{item.name}</h4>
+                    <p>{item.description}</p>
+                    <div className="menu-item-meta">
+                      <span className="price">€{item.price.toFixed(2)}</span>
+                      {item.allergens.length > 0 && (
+                        <span className="allergens">
+                          {item.allergens.join(', ')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleAddMenuItem(item)}
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Order Items */}
+            {orderItems.length > 0 && (
+              <div className="order-items-section">
+                <h3>Bestelling</h3>
+                {orderItems.map(item => (
+                  <div key={item.menu_item.id} className="order-item">
+                    <div className="order-item-info">
+                      <h4>{item.menu_item.name}</h4>
+                      <p>€{item.menu_item.price.toFixed(2)} per stuk</p>
+                      <textarea
+                        placeholder="Opmerkingen..."
+                        value={item.notes}
+                        onChange={(e) => handleNotesChange(item.menu_item.id, e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                    <div className="order-item-controls">
+                      <div className="quantity-controls">
+                        <button
+                          onClick={() => handleQuantityChange(item.menu_item.id, item.quantity - 1)}
+                        >
+                          <Minus size={16} />
+                        </button>
+                        <span>{item.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange(item.menu_item.id, item.quantity + 1)}
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
+                      <div className="item-total">
+                        €{(item.menu_item.price * item.quantity).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="order-total">
+                  <h3>Totaal: €{calculateTotal().toFixed(2)}</h3>
+                  <button
+                    className="btn btn-primary btn-lg"
+                    onClick={handleConfirmOrder}
+                    disabled={loading}
+                  >
+                    <Check size={20} style={{ marginRight: '8px' }} />
+                    Bestelling Bevestigen
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

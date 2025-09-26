@@ -308,7 +308,7 @@ const OwnerDashboard: React.FC = () => {
               onClick={() => setCurrentTab('phone')}
             >
               <Phone size={16} style={{ marginRight: '8px' }} />
-              Telefoon Bestellingen
+              Bestelling Opnemen
             </button>
             <button
               className={`tab-btn ${currentTab === 'settings' ? 'active' : ''}`}
