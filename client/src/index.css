@@ -2349,9 +2349,94 @@ body.dashboard-active {
     gap: 0.5rem;
   }
   
-  .modal-actions .btn {
-    width: 100%;
-    min-height: var(--touch-target-comfortable);
+.modal-actions .btn {
+  width: 100%;
+  min-height: var(--touch-target-comfortable);
+}
+
+/* Order Details Modal Styles */
+.order-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.order-info-section h4,
+.order-items-section h4 {
+  margin: 0 0 1rem 0;
+  color: var(--neutral-900);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.order-info-section p {
+  margin: 0.5rem 0;
+  color: var(--neutral-700);
+}
+
+.order-items-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.order-item-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--neutral-200);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background: var(--neutral-50);
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.item-quantity {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.item-name {
+  font-weight: 500;
+  color: var(--neutral-900);
+}
+
+.item-notes {
+  font-size: 0.875rem;
+  color: var(--neutral-600);
+  font-style: italic;
+}
+
+.item-price {
+  font-weight: 600;
+  color: var(--neutral-900);
+  font-size: 1rem;
+}
+  
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .order-item-detail {
+    padding: 0.5rem;
+  }
+  
+  .item-quantity {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
   }
   
   .allergen-grid {

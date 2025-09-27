@@ -71,7 +71,9 @@ const OwnerDashboard: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -510,7 +512,16 @@ const OwnerDashboard: React.FC = () => {
                 <div className="orders-section">
                   <div className="flex justify-between align-center">
                     <h4>Bestellingen</h4>
-                    <p className="text-muted">Gebruik de "Telefoon Bestellingen" tab om bestellingen toe te voegen</p>
+                    <button 
+                      className="btn btn-primary btn-sm"
+                      onClick={() => {
+                        // Switch to phone orders tab with this table pre-selected
+                        setCurrentTab('phone');
+                      }}
+                    >
+                      <Plus size={16} style={{ marginRight: '8px' }} />
+                      Bestelling Toevoegen
+                    </button>
                   </div>
                   
                   {orders.length === 0 ? (
@@ -518,7 +529,15 @@ const OwnerDashboard: React.FC = () => {
                   ) : (
                     <div className="orders-list">
                       {orders.map(order => (
-                        <div key={order.id} className="order-item">
+                        <div 
+                          key={order.id} 
+                          className="order-item clickable-order"
+                          onClick={() => {
+                            setSelectedOrder(order);
+                            setShowOrderModal(true);
+                          }}
+                          style={{ cursor: 'pointer', padding: '0.75rem', border: '1px solid var(--neutral-200)', borderRadius: '8px', marginBottom: '0.5rem' }}
+                        >
                           <div>
                             <strong>Order #{order.id.slice(-6)}</strong>
                             <span className="text-muted"> - €{order.total_amount.toFixed(2)}</span>
@@ -806,6 +825,66 @@ const OwnerDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+        {/* Order Details Modal */}
+        {showOrderModal && selectedOrder && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <div className="modal-header">
+                <h3>Bestelling Details #{selectedOrder.id.slice(-6)}</h3>
+                <button 
+                  className="btn btn-icon" 
+                  onClick={() => {
+                    setShowOrderModal(false);
+                    setSelectedOrder(null);
+                  }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="order-details-grid">
+                  <div className="order-info-section">
+                    <h4>Bestelling Info</h4>
+                    <p><strong>Status:</strong> {selectedOrder.status}</p>
+                    <p><strong>Totaal:</strong> €{selectedOrder.total_amount.toFixed(2)}</p>
+                    <p><strong>Datum:</strong> {new Date(selectedOrder.created_at).toLocaleString('nl-NL')}</p>
+                    {selectedOrder.notes && (
+                      <p><strong>Opmerkingen:</strong> {selectedOrder.notes}</p>
+                    )}
+                  </div>
+                  
+                  <div className="order-items-section">
+                    <h4>Items</h4>
+                    <div className="order-items-list">
+                      {selectedOrder.items.map((item, index) => (
+                        <div key={index} className="order-item-detail">
+                          <div className="item-info">
+                            <span className="item-quantity">{item.quantity}x</span>
+                            <span className="item-name">{item.name || `Item ${item.menu_item_id}`}</span>
+                            {item.notes && <span className="item-notes">({item.notes})</span>}
+                          </div>
+                          <span className="item-price">€{(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-actions">
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => {
+                    setShowOrderModal(false);
+                    setSelectedOrder(null);
+                  }}
+                >
+                  Sluiten
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Note: Order creation is now handled in the Phone Orders tab */}
 
