@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Utensils, Plus, Edit, Trash2, X, Clock, Leaf, Flame, 
   Eye, EyeOff, Search, Filter 
@@ -23,6 +24,7 @@ interface MenuItem {
 }
 
 const MenuManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -249,7 +251,7 @@ const MenuManagement: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <button className="btn btn-icon" onClick={() => window.history.back()}>
+            <button className="btn btn-icon" onClick={() => navigate('/owner')}>
               ←
             </button>
             <h1 className="card-title">

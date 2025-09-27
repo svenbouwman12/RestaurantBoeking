@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Phone, Users, Clock, Search, Plus, Minus, Check, X, ArrowLeft, ShoppingCart } from 'lucide-react';
 
@@ -37,6 +38,7 @@ interface OrderItem {
 }
 
 const PhoneOrders: React.FC = () => {
+  const navigate = useNavigate();
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -318,7 +320,7 @@ const PhoneOrders: React.FC = () => {
   return (
     <div className="phone-orders-container">
       <div className="phone-orders-header">
-        <button className="btn btn-secondary" onClick={() => window.history.back()}>
+        <button className="btn btn-secondary" onClick={() => navigate('/owner')}>
           <ArrowLeft size={20} style={{ marginRight: '8px' }} />
           Terug naar Dashboard
         </button>

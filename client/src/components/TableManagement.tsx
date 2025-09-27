@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Users, Plus, Edit, Trash2, Check, X, Building
 } from 'lucide-react';
@@ -13,6 +14,7 @@ interface Table {
 }
 
 const TableManagement: React.FC = () => {
+  const navigate = useNavigate();
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -171,7 +173,7 @@ const TableManagement: React.FC = () => {
       <div className="card">
         <div className="card-header">
           <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <button className="btn btn-icon" onClick={() => window.history.back()}>
+            <button className="btn btn-icon" onClick={() => navigate('/owner')}>
               ←
             </button>
             <h1 className="card-title">
