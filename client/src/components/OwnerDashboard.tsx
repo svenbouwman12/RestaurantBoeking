@@ -277,13 +277,12 @@ const OwnerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="container">
-      <div className="card">
-        <div className="card-header">
-          <h1 className="card-title">Eigenaar Dashboard</h1>
-          
-          {/* Tab Navigation */}
-          <div className="dashboard-tabs">
+    <div className="dashboard-full-width">
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">Eigenaar Dashboard</h1>
+        
+        {/* Tab Navigation */}
+        <div className="dashboard-tabs">
             <button
               className={`tab-btn ${currentTab === 'dashboard' ? 'active' : ''}`}
               onClick={() => setCurrentTab('dashboard')}
@@ -810,7 +809,6 @@ const OwnerDashboard: React.FC = () => {
 
         {/* Note: Order creation is now handled in the Phone Orders tab */}
 
-      </div>
     </div>
   );
 };
