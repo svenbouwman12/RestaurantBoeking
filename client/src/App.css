@@ -163,12 +163,13 @@
   flex: 1;
   padding: 4rem 0;
   position: relative;
-  background: var(--neutral-50);
+  background: var(--background-color);
 }
 
-/* Dashboard specific - no padding */
+/* Dashboard specific - no padding and neutral background */
 .main-content.dashboard-active {
   padding: 0;
+  background: var(--neutral-50);
 }
 
 /* Footer */
