@@ -1640,11 +1640,21 @@ body.dashboard-active {
   background: var(--neutral-50) !important;
 }
 
+/* Remove any red outlines or borders that might appear */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+}
+
 .dashboard-header {
   background: white;
   border-bottom: 2px solid var(--neutral-200);
   padding: 1rem;
   margin-bottom: 1rem;
+  outline: none !important;
 }
 
 .dashboard-title {
