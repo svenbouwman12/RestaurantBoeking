@@ -92,7 +92,7 @@ function AppContent() {
           </section>
         )}
 
-        <main className="main-content">
+        <main className={`main-content ${currentView === 'owner' ? 'dashboard-active' : ''}`}>
           <Routes>
             <Route path="/" element={<CustomerReservation />} />
             <Route path="/menu" element={<Menu />} />

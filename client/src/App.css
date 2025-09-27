@@ -161,9 +161,14 @@
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 0;
+  padding: 4rem 0;
   position: relative;
   background: var(--neutral-50);
+}
+
+/* Dashboard specific - no padding */
+.main-content.dashboard-active {
+  padding: 0;
 }
 
 /* Footer */
@@ -211,6 +216,11 @@
   }
   
   .main-content {
+    padding: 1rem 0;
+  }
+  
+  /* Dashboard specific - no padding on mobile */
+  .main-content.dashboard-active {
     padding: 0;
   }
   
