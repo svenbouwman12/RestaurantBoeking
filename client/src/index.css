@@ -2424,6 +2424,17 @@ body.dashboard-active {
   color: var(--neutral-900);
   font-size: 1rem;
 }
+
+/* Table Total Amount */
+.total-amount {
+  margin: 0.5rem 0 0 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  background: var(--primary-light);
+  padding: 0.5rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
   
   .order-details-grid {
     grid-template-columns: 1fr;
@@ -2437,6 +2448,11 @@ body.dashboard-active {
   .item-quantity {
     font-size: 0.75rem;
     padding: 0.2rem 0.4rem;
+  }
+  
+  .total-amount {
+    font-size: 1rem;
+    padding: 0.4rem;
   }
   
   .allergen-grid {

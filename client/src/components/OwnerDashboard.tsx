@@ -187,6 +187,11 @@ const OwnerDashboard: React.FC = () => {
     return menuItem ? menuItem.name : '';
   };
 
+  const getTableTotalAmount = (tableId: string): number => {
+    const tableOrders = orders.filter(order => order.table_id === tableId);
+    return tableOrders.reduce((total, order) => total + order.total_amount, 0);
+  };
+
   const getTableColor = (status: string): string => {
     switch (status) {
       case 'available': return '#28a745';
@@ -526,7 +531,14 @@ const OwnerDashboard: React.FC = () => {
 
                 <div className="orders-section">
                   <div className="flex justify-between align-center">
-                    <h4>Bestellingen</h4>
+                    <div>
+                      <h4>Bestellingen</h4>
+                      {selectedTable && (
+                        <p className="total-amount">
+                          <strong>Totaal te betalen: €{getTableTotalAmount(selectedTable.id).toFixed(2)}</strong>
+                        </p>
+                      )}
+                    </div>
                     <button 
                       className="btn btn-primary btn-sm"
                       onClick={() => {
