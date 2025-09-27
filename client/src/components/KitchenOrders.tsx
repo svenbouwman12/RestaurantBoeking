@@ -185,13 +185,10 @@ const KitchenOrders: React.FC = () => {
     return orders.filter(order => order.status === statusFilter);
   };
 
-  // Sort orders by priority - oldest first (first ordered should be prepared first)
+  // Sort orders by creation time only - stable positioning (FIFO)
   const sortedOrders = getFilteredOrders().sort((a, b) => {
-    // First, prioritize by status (preparing orders first)
-    if (a.status === 'preparing' && b.status !== 'preparing') return -1;
-    if (b.status === 'preparing' && a.status !== 'preparing') return 1;
-    
-    // Then, sort by creation time (oldest first - FIFO)
+    // Sort only by creation time (oldest first - FIFO)
+    // This ensures orders always stay in the same position
     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
   });
 
