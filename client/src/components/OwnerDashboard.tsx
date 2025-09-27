@@ -667,14 +667,14 @@ const OwnerDashboard: React.FC = () => {
         {/* Phone Orders Tab */}
         {currentTab === 'phone' && (
           <div className="tab-content">
-            <PhoneOrders onBack={() => setCurrentTab('dashboard')} />
+            <PhoneOrders />
           </div>
         )}
 
         {/* Settings Tab */}
         {currentTab === 'settings' && (
           <div className="tab-content">
-            <Settings onBack={() => setCurrentTab('dashboard')} />
+            <Settings />
           </div>
         )}
 

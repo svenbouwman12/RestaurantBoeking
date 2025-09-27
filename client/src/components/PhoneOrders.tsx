@@ -36,11 +36,7 @@ interface OrderItem {
   notes?: string;
 }
 
-interface PhoneOrdersProps {
-  onBack: () => void;
-}
-
-const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
+const PhoneOrders: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -258,7 +254,7 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
     return (
       <div className="phone-orders-container">
         <div className="phone-orders-header">
-          <button className="btn btn-secondary" onClick={onBack}>
+          <button className="btn btn-secondary" onClick={() => window.history.back()}>
             <ArrowLeft size={20} style={{ marginRight: '8px' }} />
             Terug naar Dashboard
           </button>
@@ -314,7 +310,7 @@ const PhoneOrders: React.FC<PhoneOrdersProps> = ({ onBack }) => {
   return (
     <div className="phone-orders-container">
       <div className="phone-orders-header">
-        <button className="btn btn-secondary" onClick={onBack}>
+        <button className="btn btn-secondary" onClick={() => window.history.back()}>
           <ArrowLeft size={20} style={{ marginRight: '8px' }} />
           Terug naar Dashboard
         </button>
