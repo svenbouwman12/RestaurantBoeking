@@ -462,7 +462,6 @@ const KitchenOrders: React.FC = () => {
               <p>Even geduld, de keuken wordt geladen.</p>
             </div>
           ) : null}
-          </div>
         </div>
       </div>
 
