@@ -200,38 +200,46 @@ const PhoneOrders: React.FC = () => {
 
   // Handle order confirmation
   const handleConfirmOrder = async () => {
-    if (!selectedTable || !currentReservation || orderItems.length === 0) return;
+    if (!selectedTable || orderItems.length === 0) {
+      setError('Selecteer een tafel en voeg items toe aan de bestelling');
+      return;
+    }
 
     try {
       setLoading(true);
+      setError('');
       
-      // Create order
-      const { data: orderData, error: orderError } = await supabase
+      // Create order - reservation_id can be null for walk-in customers
+      const orderData = {
+        reservation_id: currentReservation?.id || null,
+        table_id: selectedTable.id,
+        status: 'confirmed', // Changed from 'pending' to 'confirmed'
+        total_amount: calculateTotal(),
+        items: orderItems.map(item => ({
+          menu_item_id: item.menu_item.id,
+          quantity: item.quantity,
+          notes: item.notes || null,
+          price: item.menu_item.price,
+          name: item.menu_item.name // Add name for display
+        }))
+      };
+
+      const { data: orderResult, error: orderError } = await supabase
         .from('orders')
-        .insert({
-          reservation_id: currentReservation.id,
-          table_id: selectedTable.id,
-          status: 'pending',
-          total_amount: calculateTotal(),
-          items: orderItems.map(item => ({
-            menu_item_id: item.menu_item.id,
-            quantity: item.quantity,
-            notes: item.notes || null,
-            price: item.menu_item.price
-          }))
-        })
+        .insert(orderData)
         .select()
         .single();
 
       if (orderError) throw orderError;
 
-      setSuccess(`Bestelling succesvol opgenomen! Order #${orderData.id}`);
+      setSuccess(`Bestelling succesvol opgenomen! Order #${orderResult.id.slice(-6)}`);
       setOrderItems([]);
       
       // Refresh data
       await fetchData();
       
     } catch (err) {
+      console.error('Order creation error:', err);
       setError(err instanceof Error ? err.message : 'Er is een fout opgetreden bij het opnemen van de bestelling');
     } finally {
       setLoading(false);
@@ -347,7 +355,7 @@ const PhoneOrders: React.FC = () => {
                     </div>
                   </div>
                   
-                  {reservation && (
+                  {reservation ? (
                     <div className="reservation-info">
                       <div className="reservation-detail">
                         <Users size={16} />
@@ -359,6 +367,17 @@ const PhoneOrders: React.FC = () => {
                       </div>
                       <div className="reservation-detail">
                         <span>{reservation.guests} personen</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="reservation-info">
+                      <div className="reservation-detail">
+                        <Users size={16} />
+                        <span>Walk-in klant</span>
+                      </div>
+                      <div className="reservation-detail">
+                        <Clock size={16} />
+                        <span>Geen reservering</span>
                       </div>
                     </div>
                   )}
@@ -477,11 +496,14 @@ const PhoneOrders: React.FC = () => {
                   <button
                     className="btn btn-primary btn-lg"
                     onClick={handleConfirmOrder}
-                    disabled={loading}
+                    disabled={loading || orderItems.length === 0}
                   >
                     <Check size={20} style={{ marginRight: '8px' }} />
-                    Bestelling Bevestigen
+                    {loading ? 'Bevestigen...' : 'Bestelling Bevestigen'}
                   </button>
+                  {orderItems.length === 0 && (
+                    <p className="order-help-text">Voeg items toe om de bestelling te kunnen bevestigen</p>
+                  )}
                 </div>
               </div>
             )}
