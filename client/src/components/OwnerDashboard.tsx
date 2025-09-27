@@ -13,11 +13,13 @@ import {
   MessageSquare,
   Settings as SettingsIcon,
   Utensils,
-  Building
+  Building,
+  ChefHat
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
+import KitchenOrders from './KitchenOrders';
 import TableManagement from './TableManagement';
 import Settings from './Settings';
 import PhoneOrders from './PhoneOrders';
@@ -302,6 +304,13 @@ const OwnerDashboard: React.FC = () => {
             >
               <Building size={16} style={{ marginRight: '8px' }} />
               Tafel Beheer
+            </button>
+            <button
+              className={`tab-btn ${currentTab === 'kitchen' ? 'active' : ''}`}
+              onClick={() => setCurrentTab('kitchen')}
+            >
+              <ChefHat size={16} style={{ marginRight: '8px' }} />
+              Keuken
             </button>
             <button
               className={`tab-btn ${currentTab === 'phone' ? 'active' : ''}`}
@@ -661,6 +670,13 @@ const OwnerDashboard: React.FC = () => {
         {currentTab === 'tables' && (
           <div className="tab-content">
             <TableManagement />
+          </div>
+        )}
+
+        {/* Kitchen Tab */}
+        {currentTab === 'kitchen' && (
+          <div className="tab-content">
+            <KitchenOrders />
           </div>
         )}
 
