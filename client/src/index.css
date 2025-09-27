@@ -2544,13 +2544,11 @@ p {
   
   /* Kitchen Orders Mobile */
   .kitchen-orders {
-    grid-template-columns: 1fr;
     max-height: 60vh;
   }
   
   .order-card {
     padding: 0.75rem;
-    min-height: 180px;
   }
   
   .order-header {
@@ -2600,8 +2598,8 @@ p {
 
 /* Kitchen Orders Styles */
 .kitchen-orders {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   max-height: 70vh;
   overflow-y: auto;
@@ -2616,8 +2614,7 @@ p {
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  height: fit-content;
-  min-height: 200px;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -2888,7 +2885,6 @@ p {
   }
   
   .kitchen-orders {
-    grid-template-columns: repeat(2, 1fr);
     max-height: 65vh;
   }
 }
@@ -2905,21 +2901,18 @@ p {
   }
   
   .kitchen-orders {
-    grid-template-columns: repeat(3, 1fr);
     max-height: 70vh;
   }
 }
 
 @media (min-width: 1200px) {
   .kitchen-orders {
-    grid-template-columns: repeat(4, 1fr);
     max-height: 70vh;
   }
 }
 
 @media (min-width: 1600px) {
   .kitchen-orders {
-    grid-template-columns: repeat(5, 1fr);
     max-height: 70vh;
   }
 }
