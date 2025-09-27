@@ -2652,6 +2652,19 @@ p {
   100% { transform: scale(1); }
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.auto-refresh-indicator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
 .order-header {
   display: flex;
   justify-content: space-between;

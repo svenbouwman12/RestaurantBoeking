@@ -65,6 +65,7 @@ const KitchenOrders: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
 
   // Fetch all data
   const fetchData = useCallback(async () => {
@@ -115,6 +116,29 @@ const KitchenOrders: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+    
+    // Auto-refresh every 5 seconds
+    const interval = setInterval(() => {
+      console.log('Auto-refreshing kitchen orders...');
+      setIsAutoRefreshing(true);
+      fetchData().finally(() => {
+        setIsAutoRefreshing(false);
+      });
+    }, 5000);
+
+    // Real-time updates via Supabase
+    const channel = supabase
+      .channel('kitchen_orders_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, payload => {
+        console.log('Real-time change received:', payload);
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, [fetchData]);
 
   // Get menu item details
@@ -233,6 +257,11 @@ const KitchenOrders: React.FC = () => {
             <h1 className="card-title">
               <ChefHat size={24} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
               Keuken Overzicht
+              {isAutoRefreshing && (
+                <span className="auto-refresh-indicator">
+                  <RefreshCw size={16} style={{ marginLeft: '8px', animation: 'spin 1s linear infinite' }} />
+                </span>
+              )}
             </h1>
             <button 
               className="btn btn-secondary" 
