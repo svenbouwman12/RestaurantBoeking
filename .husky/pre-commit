@@ -1,14 +1,23 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Clean unused imports and check for errors
-echo "🧹 Cleaning unused imports and checking for errors..."
+echo "🔍 Running pre-commit checks..."
 
-# Run the clean-unused script
-if ! ./clean-unused.sh; then
-  echo "❌ Build errors detected!"
-  echo "Please fix the issues before committing."
+# Check for syntax errors in TypeScript/JavaScript files
+echo "📝 Checking syntax errors..."
+cd client
+
+# Run linting
+if ! npm run lint; then
+  echo "❌ Linting failed! Please fix the errors before committing."
   exit 1
 fi
 
-echo "✅ All checks passed! Proceeding with commit."
+# Run build to catch any syntax errors
+echo "🔨 Running build check..."
+if ! npm run build; then
+  echo "❌ Build failed! Please fix the errors before committing."
+  exit 1
+fi
+
+echo "✅ All checks passed! Safe to commit."

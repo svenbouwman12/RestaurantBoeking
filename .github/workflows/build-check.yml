@@ -1,0 +1,45 @@
+name: Build Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd client
+        npm ci
+        
+    - name: Run linting
+      run: |
+        cd client
+        npm run lint
+        
+    - name: Build application
+      run: |
+        cd client
+        npm run build
+        
+    - name: Check build output
+      run: |
+        if [ ! -d "client/build" ]; then
+          echo "❌ Build failed - no build directory created"
+          exit 1
+        fi
+        echo "✅ Build successful"
