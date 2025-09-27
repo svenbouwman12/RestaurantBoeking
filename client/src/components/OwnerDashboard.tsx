@@ -14,7 +14,8 @@ import {
   Settings as SettingsIcon,
   Utensils,
   Building,
-  ChefHat
+  ChefHat,
+  X
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { supabase } from '../lib/supabase';
