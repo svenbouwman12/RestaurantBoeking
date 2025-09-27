@@ -22,11 +22,7 @@ interface MenuItem {
   updated_at: string;
 }
 
-interface MenuManagementProps {
-  onBack: () => void;
-}
-
-const MenuManagement: React.FC<MenuManagementProps> = ({ onBack }) => {
+const MenuManagement: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -253,7 +249,7 @@ const MenuManagement: React.FC<MenuManagementProps> = ({ onBack }) => {
       <div className="card">
         <div className="card-header">
           <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <button className="btn btn-icon" onClick={onBack}>
+            <button className="btn btn-icon" onClick={() => window.history.back()}>
               ←
             </button>
             <h1 className="card-title">

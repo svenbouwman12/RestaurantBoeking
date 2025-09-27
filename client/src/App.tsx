@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
 import Settings from './components/Settings';
@@ -8,6 +8,19 @@ import './App.css';
 
 function App() {
   const [currentView, setCurrentView] = useState('customer');
+  const location = useLocation();
+
+  // Update currentView based on the current route
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/owner' || path === '/settings') {
+      setCurrentView('owner');
+    } else if (path === '/menu') {
+      setCurrentView('menu');
+    } else {
+      setCurrentView('customer');
+    }
+  }, [location.pathname]);
 
   return (
     <Router>
@@ -16,18 +29,18 @@ function App() {
           <div className="container">
             <div className="nav-content">
               <div className="nav-brand">
-                <img 
-                  src="/zaytun-logo.svg" 
-                  alt="Zaytun Logo" 
-                  className="nav-logo clickable-logo"
-                  onClick={() => setCurrentView('customer')}
-                />
+                <Link to="/" className="nav-logo-link">
+                  <img 
+                    src="/zaytun-logo.svg" 
+                    alt="Zaytun Logo" 
+                    className="nav-logo clickable-logo"
+                  />
+                </Link>
               </div>
               <div className="nav-links">
                 <Link 
                   to="/owner" 
                   className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
-                  onClick={() => setCurrentView('owner')}
                 >
                   Eigenaar Dashboard
                 </Link>
@@ -43,23 +56,26 @@ function App() {
                 <h1>Reserveer Je Tafel</h1>
                 <p>Ervaar culinaire perfectie in een sfeervolle omgeving. Reserveer nu je tafel en laat je verwennen door onze chef-kok.</p>
                 <div className="hero-cta">
-                  <button 
+                  <Link 
+                    to="/" 
                     className="btn btn-lg" 
-                    style={{ background: 'white', color: 'var(--primary-color)' }}
+                    style={{ background: 'white', color: 'var(--primary-color)', textDecoration: 'none' }}
                     onClick={() => {
-                      const reservationSection = document.getElementById('reservation-section');
-                      if (reservationSection) {
-                        reservationSection.scrollIntoView({ behavior: 'smooth' });
-                      }
+                      // Scroll to reservation section after navigation
+                      setTimeout(() => {
+                        const reservationSection = document.getElementById('reservation-section');
+                        if (reservationSection) {
+                          reservationSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }, 100);
                     }}
                   >
                     Direct Reserveren
-                  </button>
+                  </Link>
                   <Link 
                     to="/menu" 
                     className="btn btn-lg btn-secondary" 
                     style={{ background: 'rgba(255,255,255,0.2)', color: 'white', border: '2px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}
-                    onClick={() => setCurrentView('menu')}
                   >
                     Bekijk Menu
                   </Link>
@@ -74,7 +90,7 @@ function App() {
             <Route path="/" element={<CustomerReservation />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/owner" element={<OwnerDashboard />} />
-            <Route path="/settings" element={<Settings onBack={() => setCurrentView('owner')} />} />
+            <Route path="/settings" element={<Settings />} />
             {/* Fallback route */}
             <Route path="*" element={<CustomerReservation />} />
           </Routes>

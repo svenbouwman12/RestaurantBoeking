@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Settings as SettingsIcon,
   Save,
@@ -26,11 +27,8 @@ interface OpeningHours {
 }
 
 
-interface SettingsProps {
-  onBack: () => void;
-}
-
-const Settings: React.FC<SettingsProps> = ({ onBack }) => {
+const Settings: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
@@ -150,7 +148,7 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
 
   // Show menu management if selected
   if (currentView === 'menu') {
-    return <MenuManagement onBack={() => setCurrentView('settings')} />;
+    return <MenuManagement />;
   }
 
   return (
@@ -161,7 +159,7 @@ const Settings: React.FC<SettingsProps> = ({ onBack }) => {
             <div className="flex" style={{ alignItems: 'center', gap: '1rem' }}>
               <button 
                 className="btn btn-icon" 
-                onClick={onBack}
+                onClick={() => navigate('/owner')}
                 style={{ padding: '0.5rem' }}
               >
                 <ArrowLeft size={20} />
