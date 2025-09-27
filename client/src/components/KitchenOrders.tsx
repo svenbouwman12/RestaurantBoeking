@@ -253,11 +253,12 @@ const KitchenOrders: React.FC = () => {
   // Remove the full-screen loading indicator - let content show while loading
 
   return (
-    <div className="container">
-      <div className="card">
-        <div className="card-header">
+    <div className="kitchen-full-width">
+      {/* Header */}
+      <div className="kitchen-header">
+        <div className="container">
           <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <h1 className="card-title">
+            <h1 className="kitchen-title">
               <ChefHat size={24} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
               Keuken Overzicht
               {isInitialLoad && (
@@ -281,9 +282,13 @@ const KitchenOrders: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
 
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
+      {/* Status Filter */}
+      <div className="kitchen-filter-section">
+        <div className="container">
+          {error && <div className="error">{error}</div>}
+          {success && <div className="success">{success}</div>}
 
         {/* Status Filter */}
         <div className="status-filter">
@@ -324,9 +329,12 @@ const KitchenOrders: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Orders List */}
-        <div className="kitchen-orders">
+      {/* Orders List - Full Width */}
+      <div className="kitchen-orders-full">
+        <div className="container">
+          <div className="kitchen-orders">
           {sortedOrders.length === 0 && !isInitialLoad ? (
             <div className="empty-state">
               <ChefHat size={48} style={{ color: 'var(--neutral-400)', marginBottom: '1rem' }} />
@@ -454,6 +462,7 @@ const KitchenOrders: React.FC = () => {
               <p>Even geduld, de keuken wordt geladen.</p>
             </div>
           ) : null}
+          </div>
         </div>
       </div>
 

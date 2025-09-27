@@ -2546,11 +2546,16 @@ p {
   .kitchen-orders {
     grid-template-columns: 1fr;
     max-height: 60vh;
+    padding: 1rem;
   }
   
   .order-card {
     padding: 0.75rem;
     min-height: 180px;
+  }
+  
+  .kitchen-header, .kitchen-filter-section {
+    padding: 0.75rem 0;
   }
   
   .order-header {
@@ -2599,13 +2604,45 @@ p {
 }
 
 /* Kitchen Orders Styles */
+.kitchen-full-width {
+  width: 100%;
+  background: var(--neutral-50);
+  min-height: 100vh;
+}
+
+.kitchen-header {
+  background: white;
+  border-bottom: 2px solid var(--neutral-200);
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.kitchen-title {
+  margin: 0;
+  color: var(--neutral-900);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.kitchen-filter-section {
+  background: white;
+  border-bottom: 2px solid var(--neutral-200);
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.kitchen-orders-full {
+  width: 100%;
+  padding: 1rem 0;
+}
+
 .kitchen-orders {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   max-height: 70vh;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0;
 }
 
 .order-card {
@@ -2889,6 +2926,7 @@ p {
   .kitchen-orders {
     grid-template-columns: repeat(2, 1fr);
     max-height: 65vh;
+    padding: 1rem;
   }
 }
 
@@ -2906,6 +2944,7 @@ p {
   .kitchen-orders {
     grid-template-columns: repeat(3, 1fr);
     max-height: 70vh;
+    padding: 1rem;
   }
 }
 
@@ -2913,6 +2952,7 @@ p {
   .kitchen-orders {
     grid-template-columns: repeat(4, 1fr);
     max-height: 70vh;
+    padding: 1rem;
   }
 }
 
@@ -2920,5 +2960,6 @@ p {
   .kitchen-orders {
     grid-template-columns: repeat(4, 1fr);
     max-height: 70vh;
+    padding: 1rem;
   }
 }
