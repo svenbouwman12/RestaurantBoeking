@@ -66,6 +66,7 @@ const KitchenOrders: React.FC = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Fetch all data
   const fetchData = useCallback(async () => {
@@ -106,13 +107,18 @@ const KitchenOrders: React.FC = () => {
       setMenuItems(menuData || []);
       setTables(tablesData || []);
       setReservations(reservationsData || []);
+      
+      // Mark initial load as complete
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Error loading data');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isInitialLoad]);
 
   useEffect(() => {
     fetchData();
@@ -244,13 +250,7 @@ const KitchenOrders: React.FC = () => {
     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
   });
 
-  if (loading) {
-    return (
-      <div className="container">
-        <div className="loading">Loading...</div>
-      </div>
-    );
-  }
+  // Remove the full-screen loading indicator - let content show while loading
 
   return (
     <div className="container">
@@ -260,7 +260,12 @@ const KitchenOrders: React.FC = () => {
             <h1 className="card-title">
               <ChefHat size={24} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
               Keuken Overzicht
-              {isAutoRefreshing && (
+              {isInitialLoad && (
+                <span className="loading-indicator">
+                  <RefreshCw size={14} style={{ marginLeft: '8px', animation: 'spin 1s linear infinite', opacity: 0.5 }} />
+                </span>
+              )}
+              {isAutoRefreshing && !isInitialLoad && (
                 <span className="auto-refresh-indicator">
                   <RefreshCw size={14} style={{ marginLeft: '8px', animation: 'spin 1s linear infinite', opacity: 0.6 }} />
                 </span>
@@ -322,13 +327,13 @@ const KitchenOrders: React.FC = () => {
 
         {/* Orders List */}
         <div className="kitchen-orders">
-          {sortedOrders.length === 0 ? (
+          {sortedOrders.length === 0 && !isInitialLoad ? (
             <div className="empty-state">
               <ChefHat size={48} style={{ color: 'var(--neutral-400)', marginBottom: '1rem' }} />
               <h3>Geen bestellingen</h3>
               <p>Er zijn momenteel geen bestellingen in de keuken.</p>
             </div>
-          ) : (
+          ) : sortedOrders.length > 0 ? (
             sortedOrders.map(order => {
               const table = getTable(order.table_id);
               const reservation = getReservation(order.reservation_id);
@@ -442,7 +447,13 @@ const KitchenOrders: React.FC = () => {
                 </div>
               );
             })
-          )}
+          ) : isInitialLoad ? (
+            <div className="empty-state">
+              <ChefHat size={48} style={{ color: 'var(--neutral-300)', marginBottom: '1rem' }} />
+              <h3>Bestellingen laden...</h3>
+              <p>Even geduld, de keuken wordt geladen.</p>
+            </div>
+          ) : null}
         </div>
       </div>
 

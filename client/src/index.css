@@ -2666,6 +2666,15 @@ p {
   opacity: 0.7;
 }
 
+.loading-indicator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--neutral-400);
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
 .order-header {
   display: flex;
   justify-content: space-between;
