@@ -9,7 +9,8 @@ import {
   Eye, 
   Filter,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 
 interface Order {
