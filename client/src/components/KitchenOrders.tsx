@@ -290,43 +290,44 @@ const KitchenOrders: React.FC = () => {
           {error && <div className="error">{error}</div>}
           {success && <div className="success">{success}</div>}
 
-        {/* Status Filter */}
-        <div className="status-filter">
-          <div className="filter-label">
-            <Filter size={16} style={{ marginRight: '8px' }} />
-            Status Filter:
-          </div>
-          <div className="filter-buttons">
-            <button
-              className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('all')}
-            >
-              Alle ({orders.filter(o => o.status !== 'served' && o.status !== 'cancelled').length})
-            </button>
-            <button
-              className={`filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('pending')}
-            >
-              Wachtend ({orders.filter(o => o.status === 'pending').length})
-            </button>
-            <button
-              className={`filter-btn ${statusFilter === 'confirmed' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('confirmed')}
-            >
-              Bevestigd ({orders.filter(o => o.status === 'confirmed').length})
-            </button>
-            <button
-              className={`filter-btn ${statusFilter === 'preparing' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('preparing')}
-            >
-              Bereiden ({orders.filter(o => o.status === 'preparing').length})
-            </button>
-            <button
-              className={`filter-btn ${statusFilter === 'ready' ? 'active' : ''}`}
-              onClick={() => setStatusFilter('ready')}
-            >
-              Klaar ({orders.filter(o => o.status === 'ready').length})
-            </button>
+          {/* Status Filter */}
+          <div className="status-filter">
+            <div className="filter-label">
+              <Filter size={16} style={{ marginRight: '8px' }} />
+              Status Filter:
+            </div>
+            <div className="filter-buttons">
+              <button
+                className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('all')}
+              >
+                Alle ({orders.filter(o => o.status !== 'served' && o.status !== 'cancelled').length})
+              </button>
+              <button
+                className={`filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('pending')}
+              >
+                Wachtend ({orders.filter(o => o.status === 'pending').length})
+              </button>
+              <button
+                className={`filter-btn ${statusFilter === 'confirmed' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('confirmed')}
+              >
+                Bevestigd ({orders.filter(o => o.status === 'confirmed').length})
+              </button>
+              <button
+                className={`filter-btn ${statusFilter === 'preparing' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('preparing')}
+              >
+                Bereiden ({orders.filter(o => o.status === 'preparing').length})
+              </button>
+              <button
+                className={`filter-btn ${statusFilter === 'ready' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('ready')}
+              >
+                Klaar ({orders.filter(o => o.status === 'ready').length})
+              </button>
+            </div>
           </div>
         </div>
       </div>
