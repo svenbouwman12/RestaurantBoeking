@@ -60,7 +60,7 @@
 
 /* Navigation */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--neutral-50);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--neutral-200);
   padding: clamp(0.75rem, 2vw, 1rem) 0;

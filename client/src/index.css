@@ -69,7 +69,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--background-color);
+  background: var(--neutral-50);
   color: var(--neutral-800);
   line-height: 1.6;
   font-size: clamp(14px, 2.5vw, 16px);
