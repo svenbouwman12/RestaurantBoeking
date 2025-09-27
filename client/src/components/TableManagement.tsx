@@ -12,11 +12,7 @@ interface Table {
   updated_at: string;
 }
 
-interface TableManagementProps {
-  onBack: () => void;
-}
-
-const TableManagement: React.FC<TableManagementProps> = ({ onBack }) => {
+const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -175,7 +171,7 @@ const TableManagement: React.FC<TableManagementProps> = ({ onBack }) => {
       <div className="card">
         <div className="card-header">
           <div className="flex" style={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <button className="btn btn-icon" onClick={onBack}>
+            <button className="btn btn-icon" onClick={() => window.history.back()}>
               ←
             </button>
             <h1 className="card-title">
