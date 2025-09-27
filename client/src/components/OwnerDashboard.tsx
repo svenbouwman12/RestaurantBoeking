@@ -69,6 +69,7 @@ const OwnerDashboard: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
@@ -137,9 +138,17 @@ const OwnerDashboard: React.FC = () => {
       
       if (ordersError) throw ordersError;
       
+      // Fetch menu items
+      const { data: menuItemsData, error: menuItemsError } = await supabase
+        .from('menu_items')
+        .select('*');
+      
+      if (menuItemsError) throw menuItemsError;
+      
       setTables(tablesData);
       setReservations(reservationsData);
       setOrders(ordersData);
+      setMenuItems(menuItemsData);
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Error loading data');
@@ -171,6 +180,11 @@ const OwnerDashboard: React.FC = () => {
     const reservation = reservations.find(r => r.table_id === tableId);
     if (!reservation) return 'available';
     return reservation.status;
+  };
+
+  const getMenuItemName = (menuItemId: string): string => {
+    const menuItem = menuItems.find(item => item.id === menuItemId);
+    return menuItem ? menuItem.name : '';
   };
 
   const getTableColor = (status: string): string => {
@@ -862,7 +876,7 @@ const OwnerDashboard: React.FC = () => {
                         <div key={index} className="order-item-detail">
                           <div className="item-info">
                             <span className="item-quantity">{item.quantity}x</span>
-                            <span className="item-name">{item.name || `Item ${item.menu_item_id}`}</span>
+                            <span className="item-name">{getMenuItemName(item.menu_item_id) || `Item ${item.menu_item_id}`}</span>
                             {item.notes && <span className="item-notes">({item.notes})</span>}
                           </div>
                           <span className="item-price">€{(item.price * item.quantity).toFixed(2)}</span>
