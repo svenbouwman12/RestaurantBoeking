@@ -12,22 +12,33 @@ import {
   AlertCircle,
   X
 } from 'lucide-react';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { nl } from 'date-fns/locale';
+
+interface OrderItem {
+  menu_item_id: string;
+  quantity: number;
+  notes?: string;
+  price: number;
+  name: string;
+}
 
 interface Order {
   id: string;
   reservation_id: string;
   table_id: string;
-  status: string;
+  status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'served' | 'cancelled';
   total_amount: number;
-  items: Array<{
-    menu_item_id: string;
-    quantity: number;
-    notes?: string;
-    price: number;
-  }>;
+  items: OrderItem[];
   notes?: string;
   created_at: string;
-  updated_at: string;
+  tables: {
+    name: string;
+  };
+  reservations: {
+    customer_name: string;
+    guests: number;
+  };
 }
 
 interface MenuItem {
@@ -36,7 +47,7 @@ interface MenuItem {
   description: string;
   price: number;
   category: string;
-  prep_time_minutes: number;
+  prep_time_minutes?: number;
 }
 
 interface Table {
@@ -51,7 +62,7 @@ interface Reservation {
   guests: number;
   date: string;
   time: string;
-  table_id: string;
+  status: string;
 }
 
 const KitchenOrders: React.FC = () => {
@@ -75,7 +86,11 @@ const KitchenOrders: React.FC = () => {
       // Fetch orders - oldest first (first ordered should be prepared first)
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          tables (name),
+          reservations (customer_name, guests)
+        `)
         .order('created_at', { ascending: true });
 
       if (ordersError) throw ordersError;
@@ -94,7 +109,7 @@ const KitchenOrders: React.FC = () => {
 
       if (tablesError) throw tablesError;
 
-      // Fetch reservations for today
+      // Fetch today's reservations
       const today = new Date().toISOString().split('T')[0];
       const { data: reservationsData, error: reservationsError } = await supabase
         .from('reservations')
@@ -170,39 +185,22 @@ const KitchenOrders: React.FC = () => {
     return orders.filter(order => order.status === statusFilter);
   };
 
-  // Get status color
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case 'pending': return 'var(--warning-color)';
-      case 'confirmed': return 'var(--primary-color)';
-      case 'preparing': return 'var(--secondary-color)';
-      case 'ready': return 'var(--success-color)';
-      default: return 'var(--neutral-500)';
-    }
-  };
-
-  // Get status label
-  const getStatusLabel = (status: string): string => {
-    switch (status) {
-      case 'pending': return 'Wachtend';
-      case 'confirmed': return 'Bevestigd';
-      case 'preparing': return 'Bereiden';
-      case 'ready': return 'Klaar';
-      case 'served': return 'Geserveerd';
-      case 'cancelled': return 'Geannuleerd';
-      default: return status;
-    }
-  };
+  // Sort orders by priority - oldest first (first ordered should be prepared first)
+  const sortedOrders = getFilteredOrders().sort((a, b) => {
+    // First, prioritize by status (preparing orders first)
+    if (a.status === 'preparing' && b.status !== 'preparing') return -1;
+    if (b.status === 'preparing' && a.status !== 'preparing') return 1;
+    
+    // Then, sort by creation time (oldest first - FIFO)
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
 
   // Handle status update
-  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+  const handleStatusUpdate = async (orderId: string, newStatus: Order['status']) => {
     try {
       const { error } = await supabase
         .from('orders')
-        .update({ 
-          status: newStatus,
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: newStatus })
         .eq('id', orderId);
 
       if (error) throw error;
@@ -229,28 +227,6 @@ const KitchenOrders: React.FC = () => {
       return total + (menuItem?.prep_time_minutes || 0) * item.quantity;
     }, 0);
   };
-
-  // Get order priority (based on creation time and prep time)
-  const getOrderPriority = (order: Order): number => {
-    const now = new Date().getTime();
-    const orderTime = new Date(order.created_at).getTime();
-    const timeWaiting = (now - orderTime) / (1000 * 60); // minutes
-    const prepTime = getEstimatedPrepTime(order);
-    
-    return timeWaiting + prepTime;
-  };
-
-  // Sort orders by priority - oldest first (first ordered should be prepared first)
-  const sortedOrders = getFilteredOrders().sort((a, b) => {
-    // First, prioritize by status (preparing orders first)
-    if (a.status === 'preparing' && b.status !== 'preparing') return -1;
-    if (b.status === 'preparing' && a.status !== 'preparing') return 1;
-    
-    // Then, sort by creation time (oldest first - FIFO)
-    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-  });
-
-  // Remove the full-screen loading indicator - let content show while loading
 
   return (
     <div className="kitchen-full-width">
@@ -336,105 +312,84 @@ const KitchenOrders: React.FC = () => {
       <div className="kitchen-orders-full">
         <div className="container">
           <div className="kitchen-orders">
-          {sortedOrders.length === 0 && !isInitialLoad ? (
-            <div className="empty-state">
-              <ChefHat size={48} style={{ color: 'var(--neutral-400)', marginBottom: '1rem' }} />
-              <h3>Geen bestellingen</h3>
-              <p>Er zijn momenteel geen bestellingen in de keuken.</p>
-            </div>
-          ) : sortedOrders.length > 0 ? (
-            sortedOrders.map(order => {
-              const table = getTable(order.table_id);
-              const reservation = getReservation(order.reservation_id);
-              const estimatedTime = getEstimatedPrepTime(order);
-              const orderTime = new Date(order.created_at);
-              const timeAgo = Math.floor((Date.now() - orderTime.getTime()) / (1000 * 60));
+            {sortedOrders.length === 0 && !isInitialLoad ? (
+              <div className="empty-state">
+                <ChefHat size={48} style={{ color: 'var(--neutral-400)', marginBottom: '1rem' }} />
+                <h3>Geen bestellingen</h3>
+                <p>Er zijn momenteel geen bestellingen in de keuken.</p>
+              </div>
+            ) : sortedOrders.length > 0 ? (
+              sortedOrders.map(order => {
+                const table = getTable(order.table_id);
+                const reservation = getReservation(order.reservation_id);
+                const estimatedTime = getEstimatedPrepTime(order);
+                const orderTime = new Date(order.created_at);
 
-              return (
-                <div 
-                  key={order.id} 
-                  className={`order-card ${order.status}`}
-                  onClick={() => {
-                    setSelectedOrder(order);
-                    if (order.status === 'ready') {
-                      setShowConfirmModal(true);
-                    }
-                  }}
-                >
-                  <div className="order-header">
-                    <div className="order-info">
-                      <h3>Bestelling #{order.id.slice(-6)}</h3>
-                      <div className="order-meta">
-                        <span className="status-badge" style={{ backgroundColor: getStatusColor(order.status) }}>
-                          {getStatusLabel(order.status)}
-                        </span>
-                        <span className="time-ago">
-                          <Clock size={14} style={{ marginRight: '4px' }} />
-                          {timeAgo} min geleden
-                        </span>
+                return (
+                  <div key={order.id} className={`order-card ${order.status}`}>
+                    <div className="order-header">
+                      <div className="order-info">
+                        <h3>Bestelling #{order.id.slice(-6)}</h3>
+                        <div className="order-meta">
+                          <span className={`status-badge ${order.status}`}>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </span>
+                          <span className="time-ago">
+                            <Clock size={14} style={{ marginRight: '4px' }} />
+                            {formatDistanceToNow(orderTime, { addSuffix: true, locale: nl })}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="order-actions">
+                        {order.status === 'confirmed' && (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleStatusUpdate(order.id, 'preparing')}
+                          >
+                            <ChefHat size={16} style={{ marginRight: '8px' }} />
+                            Start Bereiden
+                          </button>
+                        )}
+                        {order.status === 'preparing' && (
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => handleStatusUpdate(order.id, 'ready')}
+                          >
+                            <Check size={16} style={{ marginRight: '8px' }} />
+                            Klaar
+                          </button>
+                        )}
+                        {order.status === 'ready' && (
+                          <span className="ready-indicator">
+                            <AlertCircle size={16} style={{ marginRight: '8px' }} />
+                            Klaar om te serveren!
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="order-actions">
-                      {order.status === 'confirmed' && (
-                        <button
-                          className="btn btn-sm btn-primary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStatusUpdate(order.id, 'preparing');
-                          }}
-                        >
-                          <ChefHat size={16} style={{ marginRight: '4px' }} />
-                          Start Bereiden
-                        </button>
-                      )}
-                      {order.status === 'preparing' && (
-                        <button
-                          className="btn btn-sm btn-success"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleStatusUpdate(order.id, 'ready');
-                          }}
-                        >
-                          <Check size={16} style={{ marginRight: '4px' }} />
-                          Klaar
-                        </button>
-                      )}
-                      {order.status === 'ready' && (
-                        <div className="ready-indicator">
-                          <AlertCircle size={16} style={{ marginRight: '4px' }} />
-                          Klik om als geserveerd te markeren
-                        </div>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="order-details">
-                    <div className="table-info">
-                      <MapPin size={16} style={{ marginRight: '8px' }} />
-                      <strong>{table?.name || 'Onbekende tafel'}</strong>
-                      {reservation && (
-                        <span style={{ marginLeft: '8px', color: 'var(--neutral-600)' }}>
-                          ({reservation.customer_name} - {reservation.guests} personen)
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="order-items">
-                      {order.items.map((item, index) => {
-                        const menuItem = getMenuItem(item.menu_item_id);
-                        return (
+                    <div className="order-details">
+                      <div className="table-info">
+                        <MapPin size={16} style={{ marginRight: '8px' }} />
+                        Tafel: {table?.name || 'Onbekend'} ({reservation?.customer_name || 'Walk-in'} - {reservation?.guests || '?'} pers.)
+                      </div>
+                      <div className="order-items">
+                        {order.items.map((item, index) => (
                           <div key={index} className="order-item">
                             <div className="item-info">
                               <span className="quantity">{item.quantity}x</span>
-                              <span className="item-name">{menuItem?.name || 'Onbekend item'}</span>
-                              {item.notes && (
-                                <span className="item-notes">({item.notes})</span>
-                              )}
+                              <span className="item-name">{item.name}</span>
+                              {item.notes && <span className="item-notes">({item.notes})</span>}
                             </div>
-                            <div className="item-price">€{(item.price * item.quantity).toFixed(2)}</div>
+                            <span className="item-price">€{(item.price * item.quantity).toFixed(2)}</span>
                           </div>
-                        );
-                      })}
+                        ))}
+                      </div>
+                      {order.notes && (
+                        <div className="order-notes">
+                          <strong>Opmerkingen:</strong> {order.notes}
+                        </div>
+                      )}
                     </div>
 
                     <div className="order-footer">
@@ -446,23 +401,17 @@ const KitchenOrders: React.FC = () => {
                         <strong>Totaal: €{order.total_amount.toFixed(2)}</strong>
                       </div>
                     </div>
-
-                    {order.notes && (
-                      <div className="order-notes">
-                        <strong>Opmerkingen:</strong> {order.notes}
-                      </div>
-                    )}
                   </div>
-                </div>
-              );
-            })
-          ) : isInitialLoad ? (
-            <div className="empty-state">
-              <ChefHat size={48} style={{ color: 'var(--neutral-300)', marginBottom: '1rem' }} />
-              <h3>Bestellingen laden...</h3>
-              <p>Even geduld, de keuken wordt geladen.</p>
-            </div>
-          ) : null}
+                );
+              })
+            ) : isInitialLoad ? (
+              <div className="empty-state">
+                <ChefHat size={48} style={{ color: 'var(--neutral-300)', marginBottom: '1rem' }} />
+                <h3>Bestellingen laden...</h3>
+                <p>Even geduld, de keuken wordt geladen.</p>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
 
