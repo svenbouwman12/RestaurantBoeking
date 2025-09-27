@@ -653,14 +653,14 @@ const OwnerDashboard: React.FC = () => {
         {/* Menu Management Tab */}
         {currentTab === 'menu' && (
           <div className="tab-content">
-            <MenuManagement onBack={() => setCurrentTab('dashboard')} />
+            <MenuManagement />
           </div>
         )}
 
         {/* Table Management Tab */}
         {currentTab === 'tables' && (
           <div className="tab-content">
-            <TableManagement onBack={() => setCurrentTab('dashboard')} />
+            <TableManagement />
           </div>
         )}
 
