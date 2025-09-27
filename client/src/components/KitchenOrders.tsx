@@ -217,6 +217,29 @@ const KitchenOrders: React.FC = () => {
     }
   };
 
+  // Handle remove order from list (mark as served)
+  const handleRemoveOrder = async (orderId: string) => {
+    try {
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({ status: 'served' })
+        .eq('id', orderId);
+
+      if (error) throw error;
+
+      setSuccess('Bestelling uit lijst gehaald!');
+      
+      // Refresh data
+      await fetchData();
+      
+      // Clear success message after 2 seconds
+      setTimeout(() => setSuccess(''), 2000);
+    } catch (error) {
+      console.error('Error removing order:', error);
+      setError('Error removing order from list');
+    }
+  };
+
   // Get estimated prep time
   const getEstimatedPrepTime = (order: Order): number => {
     return order.items.reduce((total, item) => {
@@ -356,10 +379,26 @@ const KitchenOrders: React.FC = () => {
                           </button>
                         )}
                         {order.status === 'ready' && (
-                          <span className="ready-indicator">
-                            <AlertCircle size={16} style={{ marginRight: '8px' }} />
-                            Klaar om te serveren!
-                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span className="ready-indicator">
+                              <AlertCircle size={16} style={{ marginRight: '8px' }} />
+                              Klaar om te serveren!
+                            </span>
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => handleRemoveOrder(order.id)}
+                              style={{ 
+                                backgroundColor: 'var(--neutral-600)', 
+                                color: 'white',
+                                border: 'none',
+                                fontSize: '0.75rem',
+                                padding: '0.25rem 0.5rem'
+                              }}
+                            >
+                              <X size={14} style={{ marginRight: '4px' }} />
+                              Verwijder
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
