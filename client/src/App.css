@@ -161,8 +161,9 @@
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: 4rem 0;
+  padding: 0;
   position: relative;
+  background: var(--neutral-50);
 }
 
 /* Footer */
@@ -210,7 +211,7 @@
   }
   
   .main-content {
-    padding: 1rem 0;
+    padding: 0;
   }
   
   .hero-cta {
