@@ -310,8 +310,7 @@ const KitchenOrders: React.FC = () => {
 
       {/* Orders List - Full Width */}
       <div className="kitchen-orders-full">
-        <div className="container">
-          <div className="kitchen-orders">
+        <div className="kitchen-orders">
             {sortedOrders.length === 0 && !isInitialLoad ? (
               <div className="empty-state">
                 <ChefHat size={48} style={{ color: 'var(--neutral-400)', marginBottom: '1rem' }} />
@@ -411,7 +410,6 @@ const KitchenOrders: React.FC = () => {
                 <p>Even geduld, de keuken wordt geladen.</p>
               </div>
             ) : null}
-          </div>
         </div>
       </div>
 
