@@ -2660,9 +2660,10 @@ p {
 .auto-refresh-indicator {
   display: inline-flex;
   align-items: center;
-  color: var(--primary-color);
-  font-size: 0.875rem;
-  font-weight: 500;
+  color: var(--neutral-500);
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.7;
 }
 
 .order-header {

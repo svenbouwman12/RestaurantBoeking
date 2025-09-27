@@ -71,7 +71,7 @@ const KitchenOrders: React.FC = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch orders
+      // Fetch orders - oldest first (first ordered should be prepared first)
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
         .select('*')
@@ -234,11 +234,14 @@ const KitchenOrders: React.FC = () => {
     return timeWaiting + prepTime;
   };
 
-  // Sort orders by priority
+  // Sort orders by priority - oldest first (first ordered should be prepared first)
   const sortedOrders = getFilteredOrders().sort((a, b) => {
+    // First, prioritize by status (preparing orders first)
     if (a.status === 'preparing' && b.status !== 'preparing') return -1;
     if (b.status === 'preparing' && a.status !== 'preparing') return 1;
-    return getOrderPriority(a) - getOrderPriority(b);
+    
+    // Then, sort by creation time (oldest first - FIFO)
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
   });
 
   if (loading) {
@@ -259,7 +262,7 @@ const KitchenOrders: React.FC = () => {
               Keuken Overzicht
               {isAutoRefreshing && (
                 <span className="auto-refresh-indicator">
-                  <RefreshCw size={16} style={{ marginLeft: '8px', animation: 'spin 1s linear infinite' }} />
+                  <RefreshCw size={14} style={{ marginLeft: '8px', animation: 'spin 1s linear infinite', opacity: 0.6 }} />
                 </span>
               )}
             </h1>
