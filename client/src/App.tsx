@@ -6,7 +6,7 @@ import Settings from './components/Settings';
 import Menu from './components/Menu';
 import './App.css';
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState('customer');
   const location = useLocation();
 
@@ -23,8 +23,7 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <Router>
-      <div className="App">
+    <div className="App">
         <nav className="navbar">
           <div className="container">
             <div className="nav-content">
@@ -102,6 +101,13 @@ function App() {
           </div>
         </footer>
       </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
