@@ -15,11 +15,19 @@ function AppContent() {
     const path = location.pathname;
     if (path === '/owner' || path === '/settings') {
       setCurrentView('owner');
+      document.body.classList.add('dashboard-active');
     } else if (path === '/menu') {
       setCurrentView('menu');
+      document.body.classList.remove('dashboard-active');
     } else {
       setCurrentView('customer');
+      document.body.classList.remove('dashboard-active');
     }
+    
+    // Cleanup function to remove class when component unmounts
+    return () => {
+      document.body.classList.remove('dashboard-active');
+    };
   }, [location.pathname]);
 
   return (

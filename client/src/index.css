@@ -1631,6 +1631,13 @@ p {
   width: 100%;
   background: var(--neutral-50);
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Override body background when dashboard is active */
+body.dashboard-active {
+  background: var(--neutral-50) !important;
 }
 
 .dashboard-header {
