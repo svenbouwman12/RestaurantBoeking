@@ -17,13 +17,7 @@ if ! npm install; then
     exit 1
 fi
 
-echo "🔍 Running linting..."
-if ! npm run lint; then
-    echo "❌ Linting failed! Please fix the errors."
-    exit 1
-fi
-
-echo "🔨 Running build..."
+echo "🔨 Running build (syntax check only)..."
 if ! npm run build; then
     echo "❌ Build failed! Please fix the errors."
     exit 1

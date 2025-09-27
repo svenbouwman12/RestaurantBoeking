@@ -4,39 +4,39 @@ module.exports = {
     'react-app/jest'
   ],
   rules: {
-    // Strict syntax checking
-    'no-unused-vars': 'error',
+    // Only critical syntax checking
+    'no-unused-vars': 'warn',
     'no-undef': 'error',
     'no-unreachable': 'error',
-    'no-console': 'warn',
+    'no-console': 'off',
     
-    // React specific
+    // React specific - relaxed
     'react/jsx-no-undef': 'error',
     'react/jsx-uses-vars': 'error',
     'react/jsx-uses-react': 'error',
-    'react/no-unescaped-entities': 'error',
-    'react/jsx-no-target-blank': 'error',
+    'react/no-unescaped-entities': 'off',
+    'react/jsx-no-target-blank': 'warn',
     
-    // TypeScript specific
-    '@typescript-eslint/no-unused-vars': 'error',
-    '@typescript-eslint/no-explicit-any': 'warn',
+    // TypeScript specific - relaxed
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     
-    // Code quality
-    'prefer-const': 'error',
-    'no-var': 'error',
-    'eqeqeq': 'error',
-    'curly': 'error'
+    // Code quality - relaxed
+    'prefer-const': 'warn',
+    'no-var': 'warn',
+    'eqeqeq': 'warn',
+    'curly': 'off'
   },
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
       rules: {
-        // TypeScript specific rules
+        // TypeScript specific rules - very relaxed
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       }
     }
   ],

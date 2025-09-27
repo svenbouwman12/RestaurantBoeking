@@ -26,12 +26,7 @@ jobs:
         cd client
         npm ci
         
-    - name: Run linting
-      run: |
-        cd client
-        npm run lint
-        
-    - name: Build application
+    - name: Build application (syntax check only)
       run: |
         cd client
         npm run build

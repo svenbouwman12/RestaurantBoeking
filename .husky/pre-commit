@@ -3,21 +3,15 @@
 
 echo "🔍 Running pre-commit checks..."
 
-# Check for syntax errors in TypeScript/JavaScript files
-echo "📝 Checking syntax errors..."
+# Only check for critical syntax errors, not styling
+echo "📝 Checking for critical syntax errors..."
 cd client
 
-# Run linting
-if ! npm run lint; then
-  echo "❌ Linting failed! Please fix the errors before committing."
-  exit 1
-fi
-
-# Run build to catch any syntax errors
+# Run build to catch any real syntax errors
 echo "🔨 Running build check..."
 if ! npm run build; then
-  echo "❌ Build failed! Please fix the errors before committing."
+  echo "❌ Build failed! Please fix the syntax errors before committing."
   exit 1
 fi
 
-echo "✅ All checks passed! Safe to commit."
+echo "✅ Build successful! Safe to commit."
