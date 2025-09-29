@@ -48,7 +48,7 @@ const Settings: React.FC = () => {
     return 'settings';
   };
   
-  const [currentView, setCurrentView] = useState<TabView>(getCurrentViewFromUrl());
+  const [currentView, setCurrentView] = useState<TabView>('settings');
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
@@ -239,6 +239,11 @@ const Settings: React.FC = () => {
   useEffect(() => {
     setCurrentView(getCurrentViewFromUrl());
   }, [location.pathname]);
+
+  // Initialize currentView on mount
+  useEffect(() => {
+    setCurrentView(getCurrentViewFromUrl());
+  }, []);
 
   useEffect(() => {
     fetchSettings();
