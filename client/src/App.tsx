@@ -106,25 +106,6 @@ function AppContent() {
                       }
                     }}
                   />
-                  {/* Hidden admin toggle - right click on logo to activate */}
-                  <div 
-                    className="admin-toggle" 
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      toggleAdminMode();
-                    }}
-                    style={{ 
-                      position: 'absolute', 
-                      top: '0', 
-                      left: '0', 
-                      width: '100%', 
-                      height: '100%', 
-                      cursor: 'pointer',
-                      opacity: 0,
-                      zIndex: 1000
-                    }}
-                    title="Right-click to toggle admin mode"
-                  />
                 </Link>
               </div>
               <div className="nav-links">
@@ -201,6 +182,28 @@ function AppContent() {
             <p>&copy; 2024 Tafel Reserveren. Alle rechten voorbehouden.</p>
           </div>
         </footer>
+
+        {/* Hidden admin toggle - right click bottom right corner */}
+        <div 
+          className="admin-toggle-bottom" 
+          onContextMenu={(e) => {
+            e.preventDefault();
+            toggleAdminMode();
+          }}
+          style={{ 
+            position: 'fixed', 
+            bottom: '20px', 
+            right: '20px', 
+            width: '50px', 
+            height: '50px', 
+            cursor: 'pointer',
+            opacity: 0.05,
+            zIndex: 1000,
+            background: 'transparent',
+            borderRadius: '50%'
+          }}
+          title="Right-click to toggle admin mode"
+        />
       </div>
   );
 }
