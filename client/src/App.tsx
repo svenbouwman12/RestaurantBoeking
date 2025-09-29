@@ -4,6 +4,7 @@ import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
 import Settings from './components/Settings';
 import Menu from './components/Menu';
+import logoImage from '../public/zaytun-logo.png';
 import './App.css';
 
 function AppContent() {
@@ -38,17 +39,20 @@ function AppContent() {
               <div className="nav-brand">
                 <Link to="/" className="nav-logo-link">
                   <img 
-                    src="/zaytun-logo.png" 
+                    src={logoImage} 
                     alt="Zaytun Logo" 
                     className="nav-logo clickable-logo"
                     onError={(e) => {
                       console.error('Logo failed to load:', e.currentTarget.src);
                       e.currentTarget.style.display = 'none';
-                      // Show fallback text
-                      const fallback = document.createElement('span');
-                      fallback.textContent = 'ZAYTUN';
-                      fallback.style.cssText = 'font-size: 1.5rem; font-weight: bold; color: #E5AD43; letter-spacing: 1px;';
-                      e.currentTarget.parentNode?.appendChild(fallback);
+                      // Show fallback text only if not already present
+                      if (!e.currentTarget.parentNode?.querySelector('.logo-fallback')) {
+                        const fallback = document.createElement('span');
+                        fallback.className = 'logo-fallback';
+                        fallback.textContent = 'ZAYTUN';
+                        fallback.style.cssText = 'font-size: 1.5rem; font-weight: bold; color: #E5AD43; letter-spacing: 1px;';
+                        e.currentTarget.parentNode?.appendChild(fallback);
+                      }
                     }}
                   />
                 </Link>
