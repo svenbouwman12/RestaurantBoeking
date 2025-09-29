@@ -256,10 +256,6 @@ const Settings: React.FC = () => {
     sunday: 'Zondag'
   };
 
-  // Show menu management if selected
-  if (currentView === 'menu') {
-    return <MenuManagement />;
-  }
 
   return (
     <div className="container">
