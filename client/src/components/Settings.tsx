@@ -39,7 +39,7 @@ const Settings: React.FC = () => {
   const [success, setSuccess] = useState<string>('');
   
   // Determine current view from URL
-  const getCurrentViewFromUrl = () => {
+  const getCurrentViewFromUrl = (): 'settings' | 'categories' | 'allergens' | 'menu' => {
     const path = location.pathname;
     if (path === '/settings/categories') return 'categories';
     if (path === '/settings/allergens') return 'allergens';
@@ -47,7 +47,7 @@ const Settings: React.FC = () => {
     return 'settings';
   };
   
-  const [currentView, setCurrentView] = useState<'settings' | 'categories' | 'allergens' | 'menu'>(getCurrentViewFromUrl);
+  const [currentView, setCurrentView] = useState<'settings' | 'categories' | 'allergens' | 'menu'>(getCurrentViewFromUrl());
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
