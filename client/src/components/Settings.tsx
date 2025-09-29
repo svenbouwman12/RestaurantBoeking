@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Settings as SettingsIcon,
   Save,
@@ -33,10 +33,21 @@ interface OpeningHours {
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [currentView, setCurrentView] = useState<'settings' | 'menu' | 'categories' | 'allergens'>('settings');
+  
+  // Determine current view from URL
+  const getCurrentViewFromUrl = () => {
+    const path = location.pathname;
+    if (path === '/settings/categories') return 'categories';
+    if (path === '/settings/allergens') return 'allergens';
+    if (path === '/settings/menu') return 'menu';
+    return 'settings';
+  };
+  
+  const [currentView, setCurrentView] = useState<'settings' | 'menu' | 'categories' | 'allergens'>(getCurrentViewFromUrl);
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
@@ -152,14 +163,16 @@ const Settings: React.FC = () => {
       if (menuError) throw menuError;
       
       // Extract unique categories
-      const uniqueCategories = [...new Set(menuData.map(item => item.category).filter(Boolean))];
+      const categorySet = new Set(menuData.map(item => item.category).filter(Boolean));
+      const uniqueCategories = Array.from(categorySet);
       setCategories(uniqueCategories);
       
       // Extract unique allergens
       const allAllergens = menuData
         .flatMap(item => item.allergens || [])
         .filter(Boolean);
-      const uniqueAllergens = [...new Set(allAllergens)];
+      const allergenSet = new Set(allAllergens);
+      const uniqueAllergens = Array.from(allergenSet);
       setAllergens(uniqueAllergens);
     } catch (error) {
       console.error('Error fetching categories and allergens:', error);
@@ -221,6 +234,11 @@ const Settings: React.FC = () => {
     }
   };
 
+  // Update currentView when URL changes
+  useEffect(() => {
+    setCurrentView(getCurrentViewFromUrl());
+  }, [location.pathname]);
+
   useEffect(() => {
     fetchSettings();
     fetchCategoriesAndAllergens();
@@ -277,28 +295,28 @@ const Settings: React.FC = () => {
         <div className="tab-navigation">
           <button 
             className={`tab-button ${currentView === 'settings' ? 'active' : ''}`}
-            onClick={() => setCurrentView('settings')}
+            onClick={() => navigate('/settings')}
           >
             <SettingsIcon size={16} style={{ marginRight: '8px' }} />
             Instellingen
           </button>
           <button 
             className={`tab-button ${currentView === 'categories' ? 'active' : ''}`}
-            onClick={() => setCurrentView('categories')}
+            onClick={() => navigate('/settings/categories')}
           >
             <Tag size={16} style={{ marginRight: '8px' }} />
             Categorieën
           </button>
           <button 
             className={`tab-button ${currentView === 'allergens' ? 'active' : ''}`}
-            onClick={() => setCurrentView('allergens')}
+            onClick={() => navigate('/settings/allergens')}
           >
             <AlertTriangle size={16} style={{ marginRight: '8px' }} />
             Allergenen
           </button>
           <button 
             className={`tab-button ${currentView === 'menu' ? 'active' : ''}`}
-            onClick={() => setCurrentView('menu')}
+            onClick={() => navigate('/settings/menu')}
           >
             <Utensils size={16} style={{ marginRight: '8px' }} />
             Menu Beheer

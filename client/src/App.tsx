@@ -13,7 +13,7 @@ function AppContent() {
   // Update currentView based on the current route
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/owner' || path === '/settings') {
+    if (path.startsWith('/owner') || path.startsWith('/settings')) {
       setCurrentView('owner');
       document.body.classList.add('dashboard-active');
     } else if (path === '/menu') {
@@ -98,6 +98,9 @@ function AppContent() {
             <Route path="/menu" element={<Menu />} />
             <Route path="/owner" element={<OwnerDashboard />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/categories" element={<Settings />} />
+            <Route path="/settings/allergens" element={<Settings />} />
+            <Route path="/settings/menu" element={<Settings />} />
             {/* Fallback route */}
             <Route path="*" element={<CustomerReservation />} />
           </Routes>

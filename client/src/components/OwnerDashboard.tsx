@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
@@ -22,7 +23,6 @@ import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
 import KitchenOrders from './KitchenOrders';
 import TableManagement from './TableManagement';
-import Settings from './Settings';
 import PhoneOrders from './PhoneOrders';
 
 interface Table {
@@ -65,6 +65,7 @@ interface Order {
 
 
 const OwnerDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -340,9 +341,9 @@ const OwnerDashboard: React.FC = () => {
               <Phone size={16} style={{ marginRight: '8px' }} />
               Bestelling Opnemen
             </button>
-            <button
+            <button 
               className={`tab-btn ${currentTab === 'settings' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('settings')}
+              onClick={() => navigate('/settings')}
             >
               <SettingsIcon size={16} style={{ marginRight: '8px' }} />
               Instellingen
@@ -732,12 +733,6 @@ const OwnerDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Settings Tab */}
-        {currentTab === 'settings' && (
-          <div className="tab-content">
-            <Settings />
-          </div>
-        )}
 
         {/* Create Reservation Modal */}
         {showReservationModal && (
