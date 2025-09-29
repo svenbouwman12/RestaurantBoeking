@@ -126,15 +126,7 @@ function AppContent() {
                 </Link>
               </div>
               <div className="nav-links">
-                {/* Only show dashboard link in admin mode */}
-                {adminMode && (
-                  <Link 
-                    to="/owner" 
-                    className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
-                  >
-                    Eigenaar Dashboard
-                  </Link>
-                )}
+                {/* Dashboard link removed - direct redirect after pin entry */}
               </div>
             </div>
           </div>
