@@ -96,6 +96,8 @@
 .nav-logo {
   height: clamp(32px, 6vw, 40px);
   width: auto;
+  max-width: 200px;
+  object-fit: contain;
 }
 
 .clickable-logo {

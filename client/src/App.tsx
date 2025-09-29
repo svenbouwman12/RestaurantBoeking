@@ -41,7 +41,18 @@ function AppContent() {
                     src="/zaytun-logo.svg" 
                     alt="Zaytun Logo" 
                     className="nav-logo clickable-logo"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
                   />
+                  <span className="logo-text" style={{ 
+                    fontSize: '1.5rem', 
+                    fontWeight: 'bold', 
+                    color: '#E5AD43',
+                    marginLeft: '0.5rem'
+                  }}>
+                    Zaytun
+                  </span>
                 </Link>
               </div>
               <div className="nav-links">
