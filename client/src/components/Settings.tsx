@@ -47,7 +47,7 @@ const Settings: React.FC = () => {
     return 'settings';
   };
   
-  const [currentView, setCurrentView] = useState<'settings' | 'menu' | 'categories' | 'allergens'>(getCurrentViewFromUrl);
+  const [currentView, setCurrentView] = useState<'settings' | 'categories' | 'allergens' | 'menu'>(getCurrentViewFromUrl);
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
