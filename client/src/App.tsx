@@ -37,32 +37,11 @@ function AppContent() {
             <div className="nav-content">
               <div className="nav-brand">
                 <Link to="/" className="nav-logo-link">
-                  <div className="logo-container" style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textDecoration: 'none'
-                  }}>
-                    <span className="logo-main" style={{ 
-                      fontSize: '1.8rem', 
-                      fontWeight: 'bold', 
-                      color: '#E5AD43',
-                      lineHeight: 1,
-                      letterSpacing: '1px'
-                    }}>
-                      ZAYTUN
-                    </span>
-                    <span className="logo-sub" style={{ 
-                      fontSize: '0.7rem', 
-                      fontWeight: 'normal', 
-                      color: '#db9c2c',
-                      lineHeight: 1,
-                      letterSpacing: '0.5px',
-                      marginTop: '-2px'
-                    }}>
-                      RESTAURANT
-                    </span>
-                  </div>
+                  <img 
+                    src="/zaytun-logo.png" 
+                    alt="Zaytun Logo" 
+                    className="nav-logo clickable-logo"
+                  />
                 </Link>
               </div>
               <div className="nav-links">
