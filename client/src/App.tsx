@@ -9,6 +9,7 @@ import './App.css';
 
 function AppContent() {
   const [currentView, setCurrentView] = useState('customer');
+  const [adminMode, setAdminMode] = useState(false);
   const location = useLocation();
 
   // Update currentView based on the current route
@@ -30,6 +31,56 @@ function AppContent() {
       document.body.classList.remove('dashboard-active');
     };
   }, [location.pathname]);
+
+  // Check for admin mode activation
+  useEffect(() => {
+    const checkAdminMode = () => {
+      // Check if admin mode is activated via localStorage or special URL
+      const isAdminMode = localStorage.getItem('adminMode') === 'true' || 
+                         window.location.search.includes('admin=true') ||
+                         window.location.hash.includes('admin');
+      
+      if (isAdminMode) {
+        setAdminMode(true);
+        localStorage.setItem('adminMode', 'true');
+      }
+    };
+
+    checkAdminMode();
+  }, []);
+
+  // Function to toggle admin mode
+  const toggleAdminMode = () => {
+    const newAdminMode = !adminMode;
+    setAdminMode(newAdminMode);
+    if (newAdminMode) {
+      localStorage.setItem('adminMode', 'true');
+    } else {
+      localStorage.removeItem('adminMode');
+    }
+  };
+
+  // Hidden key combination for admin access
+  useEffect(() => {
+    let keySequence = '';
+    const targetSequence = 'admin123';
+    
+    const handleKeyPress = (e) => {
+      keySequence += e.key;
+      if (keySequence.length > targetSequence.length) {
+        keySequence = keySequence.slice(-targetSequence.length);
+      }
+      
+      if (keySequence === targetSequence) {
+        setAdminMode(true);
+        localStorage.setItem('adminMode', 'true');
+        keySequence = '';
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, []);
 
   return (
     <div className="App">
@@ -55,15 +106,37 @@ function AppContent() {
                       }
                     }}
                   />
+                  {/* Hidden admin toggle - right click on logo to activate */}
+                  <div 
+                    className="admin-toggle" 
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      toggleAdminMode();
+                    }}
+                    style={{ 
+                      position: 'absolute', 
+                      top: '0', 
+                      left: '0', 
+                      width: '100%', 
+                      height: '100%', 
+                      cursor: 'pointer',
+                      opacity: 0,
+                      zIndex: 1000
+                    }}
+                    title="Right-click to toggle admin mode"
+                  />
                 </Link>
               </div>
               <div className="nav-links">
-                <Link 
-                  to="/owner" 
-                  className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
-                >
-                  Eigenaar Dashboard
-                </Link>
+                {/* Only show dashboard link in admin mode */}
+                {adminMode && (
+                  <Link 
+                    to="/owner" 
+                    className={`nav-link ${currentView === 'owner' ? 'active' : ''}`}
+                  >
+                    Eigenaar Dashboard
+                  </Link>
+                )}
               </div>
             </div>
           </div>
