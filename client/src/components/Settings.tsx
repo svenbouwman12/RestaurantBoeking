@@ -40,9 +40,9 @@ const Settings: React.FC = () => {
   // Determine current view from URL
   const getCurrentViewFromUrl = () => {
     const path = location.pathname;
-    if (path === '/settings/categories') return 'categories';
-    if (path === '/settings/allergens') return 'allergens';
-    if (path === '/settings/menu') return 'menu';
+    if (path === '/categories') return 'categories';
+    if (path === '/allergens') return 'allergens';
+    if (path === '/menu-management') return 'menu';
     return 'settings';
   };
   
@@ -306,21 +306,21 @@ const Settings: React.FC = () => {
           </button>
           <button 
             className={`tab-button ${currentView === 'categories' ? 'active' : ''}`}
-            onClick={() => navigate('/settings/categories')}
+            onClick={() => navigate('/categories')}
           >
             <Tag size={16} style={{ marginRight: '8px' }} />
             Categorieën
           </button>
           <button 
             className={`tab-button ${currentView === 'allergens' ? 'active' : ''}`}
-            onClick={() => navigate('/settings/allergens')}
+            onClick={() => navigate('/allergens')}
           >
             <AlertTriangle size={16} style={{ marginRight: '8px' }} />
             Allergenen
           </button>
           <button 
             className={`tab-button ${currentView === 'menu' ? 'active' : ''}`}
-            onClick={() => navigate('/settings/menu')}
+            onClick={() => navigate('/menu-management')}
           >
             <Utensils size={16} style={{ marginRight: '8px' }} />
             Menu Beheer
