@@ -148,6 +148,111 @@
   opacity: 0.1;
 }
 
+/* Pin Modal */
+.pin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.pin-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pin-modal h3 {
+  margin: 0 0 1rem 0;
+  color: var(--neutral-900);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.pin-modal p {
+  margin: 0 0 1.5rem 0;
+  color: var(--neutral-600);
+  line-height: 1.5;
+}
+
+.pin-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--neutral-200);
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  text-align: center;
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+  outline: none;
+}
+
+.pin-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.pin-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.pin-modal-buttons .btn {
+  min-width: 120px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pin-modal-buttons .btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.pin-modal-buttons .btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.pin-modal-buttons .btn-secondary {
+  background: var(--neutral-100);
+  color: var(--neutral-700);
+  border: 1px solid var(--neutral-200);
+}
+
+.pin-modal-buttons .btn-secondary:hover {
+  background: var(--neutral-200);
+  transform: translateY(-1px);
+}
+
 
 .nav-links {
   display: flex;

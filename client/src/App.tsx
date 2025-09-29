@@ -10,6 +10,8 @@ import './App.css';
 function AppContent() {
   const [currentView, setCurrentView] = useState('customer');
   const [adminMode, setAdminMode] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinInput, setPinInput] = useState('');
   const location = useLocation();
 
   // Update currentView based on the current route
@@ -49,15 +51,31 @@ function AppContent() {
     checkAdminMode();
   }, []);
 
-  // Function to toggle admin mode
-  const toggleAdminMode = () => {
-    const newAdminMode = !adminMode;
-    setAdminMode(newAdminMode);
-    if (newAdminMode) {
+  // Function to activate admin mode with pin
+  const activateAdminMode = () => {
+    setShowPinModal(true);
+  };
+
+  // Function to verify pin and activate admin mode
+  const verifyPin = () => {
+    const correctPin = '1234'; // Default pin - kan later worden aangepast
+    if (pinInput === correctPin) {
+      setAdminMode(true);
       localStorage.setItem('adminMode', 'true');
+      setShowPinModal(false);
+      setPinInput('');
+      // Direct doorsturen naar dashboard
+      window.location.href = '/owner';
     } else {
-      localStorage.removeItem('adminMode');
+      alert('Onjuiste pincode. Probeer opnieuw.');
+      setPinInput('');
     }
+  };
+
+  // Function to close pin modal
+  const closePinModal = () => {
+    setShowPinModal(false);
+    setPinInput('');
   };
 
   // Hidden key combination for admin access
@@ -72,8 +90,7 @@ function AppContent() {
       }
       
       if (keySequence === targetSequence) {
-        setAdminMode(true);
-        localStorage.setItem('adminMode', 'true');
+        activateAdminMode();
         keySequence = '';
       }
     };
@@ -188,7 +205,7 @@ function AppContent() {
           className="admin-toggle-bottom" 
           onContextMenu={(e) => {
             e.preventDefault();
-            toggleAdminMode();
+            activateAdminMode();
           }}
           style={{ 
             position: 'fixed', 
@@ -202,8 +219,39 @@ function AppContent() {
             background: 'transparent',
             borderRadius: '50%'
           }}
-          title="Right-click to toggle admin mode"
+          title="Right-click to access admin"
         />
+
+        {/* Pin Modal */}
+        {showPinModal && (
+          <div className="pin-modal-overlay">
+            <div className="pin-modal">
+              <h3>Admin Toegang</h3>
+              <p>Voer de pincode in om toegang te krijgen tot het dashboard:</p>
+              <input
+                type="password"
+                value={pinInput}
+                onChange={(e) => setPinInput(e.target.value)}
+                placeholder="Pincode"
+                className="pin-input"
+                autoFocus
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    verifyPin();
+                  }
+                }}
+              />
+              <div className="pin-modal-buttons">
+                <button onClick={verifyPin} className="btn btn-primary">
+                  Inloggen
+                </button>
+                <button onClick={closePinModal} className="btn btn-secondary">
+                  Annuleren
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   );
 }
