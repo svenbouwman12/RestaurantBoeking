@@ -7,7 +7,11 @@ import {
   Clock,
   Calendar,
   Utensils,
-  Building
+  Building,
+  Tag,
+  AlertTriangle,
+  Plus,
+  X
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MenuManagement from './MenuManagement';
@@ -32,7 +36,7 @@ const Settings: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [currentView, setCurrentView] = useState<'settings' | 'menu'>('settings');
+  const [currentView, setCurrentView] = useState<'settings' | 'menu' | 'categories' | 'allergens'>('settings');
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
@@ -41,6 +45,12 @@ const Settings: React.FC = () => {
   const [maxAdvanceDays, setMaxAdvanceDays] = useState(30);
   const [minAdvanceHours, setMinAdvanceHours] = useState(2);
   const [restaurantName, setRestaurantName] = useState('Zaytun Restaurant');
+  
+  // Categories and allergens state
+  const [categories, setCategories] = useState<string[]>([]);
+  const [allergens, setAllergens] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState('');
+  const [newAllergen, setNewAllergen] = useState('');
   
   // Table management state
 
@@ -131,10 +141,90 @@ const Settings: React.FC = () => {
     }
   };
 
+  // Fetch categories and allergens
+  const fetchCategoriesAndAllergens = useCallback(async () => {
+    try {
+      // Fetch unique categories from menu items
+      const { data: menuData, error: menuError } = await supabase
+        .from('menu_items')
+        .select('category, allergens');
+      
+      if (menuError) throw menuError;
+      
+      // Extract unique categories
+      const uniqueCategories = [...new Set(menuData.map(item => item.category).filter(Boolean))];
+      setCategories(uniqueCategories);
+      
+      // Extract unique allergens
+      const allAllergens = menuData
+        .flatMap(item => item.allergens || [])
+        .filter(Boolean);
+      const uniqueAllergens = [...new Set(allAllergens)];
+      setAllergens(uniqueAllergens);
+    } catch (error) {
+      console.error('Error fetching categories and allergens:', error);
+      setError('Fout bij het laden van categorieën en allergenen');
+    }
+  }, []);
+
+  // Add new category
+  const addCategory = async () => {
+    if (!newCategory.trim()) return;
+    
+    try {
+      setCategories(prev => [...prev, newCategory.trim()]);
+      setNewCategory('');
+      setSuccess('Categorie toegevoegd!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error adding category:', error);
+      setError('Fout bij het toevoegen van categorie');
+    }
+  };
+
+  // Remove category
+  const removeCategory = async (category: string) => {
+    try {
+      setCategories(prev => prev.filter(cat => cat !== category));
+      setSuccess('Categorie verwijderd!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error removing category:', error);
+      setError('Fout bij het verwijderen van categorie');
+    }
+  };
+
+  // Add new allergen
+  const addAllergen = async () => {
+    if (!newAllergen.trim()) return;
+    
+    try {
+      setAllergens(prev => [...prev, newAllergen.trim()]);
+      setNewAllergen('');
+      setSuccess('Allergeen toegevoegd!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error adding allergen:', error);
+      setError('Fout bij het toevoegen van allergeen');
+    }
+  };
+
+  // Remove allergen
+  const removeAllergen = async (allergen: string) => {
+    try {
+      setAllergens(prev => prev.filter(all => all !== allergen));
+      setSuccess('Allergeen verwijderd!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Error removing allergen:', error);
+      setError('Fout bij het verwijderen van allergeen');
+    }
+  };
 
   useEffect(() => {
     fetchSettings();
-  }, [fetchSettings]);
+    fetchCategoriesAndAllergens();
+  }, [fetchSettings, fetchCategoriesAndAllergens]);
 
   const dayNames = {
     monday: 'Maandag',
@@ -183,8 +273,43 @@ const Settings: React.FC = () => {
         {error && <div className="alert alert-error">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
 
+        {/* Tab Navigation */}
+        <div className="tab-navigation">
+          <button 
+            className={`tab-button ${currentView === 'settings' ? 'active' : ''}`}
+            onClick={() => setCurrentView('settings')}
+          >
+            <SettingsIcon size={16} style={{ marginRight: '8px' }} />
+            Instellingen
+          </button>
+          <button 
+            className={`tab-button ${currentView === 'categories' ? 'active' : ''}`}
+            onClick={() => setCurrentView('categories')}
+          >
+            <Tag size={16} style={{ marginRight: '8px' }} />
+            Categorieën
+          </button>
+          <button 
+            className={`tab-button ${currentView === 'allergens' ? 'active' : ''}`}
+            onClick={() => setCurrentView('allergens')}
+          >
+            <AlertTriangle size={16} style={{ marginRight: '8px' }} />
+            Allergenen
+          </button>
+          <button 
+            className={`tab-button ${currentView === 'menu' ? 'active' : ''}`}
+            onClick={() => setCurrentView('menu')}
+          >
+            <Utensils size={16} style={{ marginRight: '8px' }} />
+            Menu Beheer
+          </button>
+        </div>
+
         <div className="card-body">
-          {/* Restaurant Information */}
+          {/* Settings Tab */}
+          {currentView === 'settings' && (
+            <>
+              {/* Restaurant Information */}
           <div className="card mb-20">
             <div className="card-header">
               <h3 className="card-title">
@@ -361,6 +486,145 @@ const Settings: React.FC = () => {
                      </p>
                    </div>
                  </div>
+            </>
+          )}
+
+          {/* Categories Tab */}
+          {currentView === 'categories' && (
+            <div className="card mb-20">
+              <div className="card-header">
+                <h3 className="card-title">
+                  <Tag size={20} style={{ marginRight: '8px' }} />
+                  Menu Categorieën Beheer
+                </h3>
+              </div>
+              <div className="card-body">
+                <p className="text-muted mb-20">
+                  Beheer de categorieën die gebruikt worden voor menu items. 
+                  Categorieën worden automatisch opgehaald uit bestaande menu items.
+                </p>
+
+                {/* Add new category */}
+                <div className="form-group mb-20">
+                  <label className="form-label">Nieuwe categorie toevoegen</label>
+                  <div className="flex" style={{ gap: '1rem', alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        className="form-input"
+                        placeholder="Bijv. Voorgerechten, Hoofdgerechten, Desserts"
+                        onKeyPress={(e) => e.key === 'Enter' && addCategory()}
+                      />
+                    </div>
+                    <button 
+                      className="btn btn-primary"
+                      onClick={addCategory}
+                      disabled={!newCategory.trim()}
+                    >
+                      <Plus size={16} style={{ marginRight: '8px' }} />
+                      Toevoegen
+                    </button>
+                  </div>
+                </div>
+
+                {/* Categories list */}
+                <div className="form-group">
+                  <label className="form-label">Bestaande categorieën</label>
+                  {categories.length === 0 ? (
+                    <p className="text-muted">Nog geen categorieën gevonden</p>
+                  ) : (
+                    <div className="categories-list">
+                      {categories.map((category, index) => (
+                        <div key={index} className="category-item">
+                          <span className="category-name">{category}</span>
+                          <button 
+                            className="btn btn-sm btn-danger"
+                            onClick={() => removeCategory(category)}
+                            title="Categorie verwijderen"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Allergens Tab */}
+          {currentView === 'allergens' && (
+            <div className="card mb-20">
+              <div className="card-header">
+                <h3 className="card-title">
+                  <AlertTriangle size={20} style={{ marginRight: '8px' }} />
+                  Allergenen Beheer
+                </h3>
+              </div>
+              <div className="card-body">
+                <p className="text-muted mb-20">
+                  Beheer de allergenen die gebruikt worden voor menu items. 
+                  Allergenen worden automatisch opgehaald uit bestaande menu items.
+                </p>
+
+                {/* Add new allergen */}
+                <div className="form-group mb-20">
+                  <label className="form-label">Nieuw allergeen toevoegen</label>
+                  <div className="flex" style={{ gap: '1rem', alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        value={newAllergen}
+                        onChange={(e) => setNewAllergen(e.target.value)}
+                        className="form-input"
+                        placeholder="Bijv. Gluten, Lactose, Noten, Eieren"
+                        onKeyPress={(e) => e.key === 'Enter' && addAllergen()}
+                      />
+                    </div>
+                    <button 
+                      className="btn btn-primary"
+                      onClick={addAllergen}
+                      disabled={!newAllergen.trim()}
+                    >
+                      <Plus size={16} style={{ marginRight: '8px' }} />
+                      Toevoegen
+                    </button>
+                  </div>
+                </div>
+
+                {/* Allergens list */}
+                <div className="form-group">
+                  <label className="form-label">Bestaande allergenen</label>
+                  {allergens.length === 0 ? (
+                    <p className="text-muted">Nog geen allergenen gevonden</p>
+                  ) : (
+                    <div className="allergens-list">
+                      {allergens.map((allergen, index) => (
+                        <div key={index} className="allergen-item">
+                          <span className="allergen-name">{allergen}</span>
+                          <button 
+                            className="btn btn-sm btn-danger"
+                            onClick={() => removeAllergen(allergen)}
+                            title="Allergeen verwijderen"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Menu Management Tab */}
+          {currentView === 'menu' && (
+            <MenuManagement />
+          )}
 
         </div>
       </div>
