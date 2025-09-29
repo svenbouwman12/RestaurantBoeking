@@ -4,7 +4,7 @@ import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
 import Settings from './components/Settings';
 import Menu from './components/Menu';
-import logoImage from '../public/zaytun-logo.png';
+import logoImage from './assets/zaytun-logo.png';
 import './App.css';
 
 function AppContent() {
