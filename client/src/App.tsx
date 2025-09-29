@@ -4,7 +4,7 @@ import CustomerReservation from './components/CustomerReservation';
 import OwnerDashboard from './components/OwnerDashboard';
 import Settings from './components/Settings';
 import Menu from './components/Menu';
-import logoImage from './assets/zaytun-logo.png';
+// import logoImage from './assets/zaytun-logo.png';
 import './App.css';
 
 function AppContent() {
@@ -39,7 +39,7 @@ function AppContent() {
               <div className="nav-brand">
                 <Link to="/" className="nav-logo-link">
                   <img 
-                    src={logoImage} 
+                    src="/zaytun-logo.png" 
                     alt="Zaytun Logo" 
                     className="nav-logo clickable-logo"
                     onError={(e) => {
