@@ -13,7 +13,7 @@ function AppContent() {
   // Update currentView based on the current route
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/owner') || path.startsWith('/settings') || path.startsWith('/categories') || path.startsWith('/allergens') || path.startsWith('/menu-management')) {
+    if (path.startsWith('/owner') || path.startsWith('/dashboard') || path.startsWith('/menu-beheer') || path.startsWith('/tafel-beheer') || path.startsWith('/keuken') || path.startsWith('/bestelling-opnemen') || path.startsWith('/settings') || path.startsWith('/categories') || path.startsWith('/allergens') || path.startsWith('/menu-management')) {
       setCurrentView('owner');
       document.body.classList.add('dashboard-active');
     } else if (path === '/menu') {
@@ -97,6 +97,11 @@ function AppContent() {
             <Route path="/" element={<CustomerReservation />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/owner" element={<OwnerDashboard />} />
+            <Route path="/dashboard" element={<OwnerDashboard />} />
+            <Route path="/menu-beheer" element={<OwnerDashboard />} />
+            <Route path="/tafel-beheer" element={<OwnerDashboard />} />
+            <Route path="/keuken" element={<OwnerDashboard />} />
+            <Route path="/bestelling-opnemen" element={<OwnerDashboard />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/categories" element={<Settings />} />
             <Route path="/allergens" element={<Settings />} />

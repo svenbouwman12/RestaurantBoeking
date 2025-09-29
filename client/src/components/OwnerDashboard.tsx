@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
@@ -66,7 +66,19 @@ interface Order {
 
 const OwnerDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const location = useLocation();
+  
+  // Determine current tab from URL
+  const getCurrentTabFromUrl = () => {
+    const path = location.pathname;
+    if (path === '/menu-beheer') return 'menu';
+    if (path === '/tafel-beheer') return 'tables';
+    if (path === '/keuken') return 'kitchen';
+    if (path === '/bestelling-opnemen') return 'phone';
+    return 'dashboard';
+  };
+  
+  const [currentTab, setCurrentTab] = useState<string>(getCurrentTabFromUrl());
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -77,6 +89,11 @@ const OwnerDashboard: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
+
+  // Update currentTab when URL changes
+  useEffect(() => {
+    setCurrentTab(getCurrentTabFromUrl());
+  }, [location.pathname]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -308,35 +325,35 @@ const OwnerDashboard: React.FC = () => {
         <div className="dashboard-tabs">
             <button
               className={`tab-btn ${currentTab === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('dashboard')}
+              onClick={() => navigate('/dashboard')}
             >
               <Calendar size={16} style={{ marginRight: '8px' }} />
               Dashboard
             </button>
             <button
               className={`tab-btn ${currentTab === 'menu' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('menu')}
+              onClick={() => navigate('/menu-beheer')}
             >
               <Utensils size={16} style={{ marginRight: '8px' }} />
               Menu Beheer
             </button>
             <button
               className={`tab-btn ${currentTab === 'tables' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('tables')}
+              onClick={() => navigate('/tafel-beheer')}
             >
               <Building size={16} style={{ marginRight: '8px' }} />
               Tafel Beheer
             </button>
             <button
               className={`tab-btn ${currentTab === 'kitchen' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('kitchen')}
+              onClick={() => navigate('/keuken')}
             >
               <ChefHat size={16} style={{ marginRight: '8px' }} />
               Keuken
             </button>
             <button
               className={`tab-btn ${currentTab === 'phone' ? 'active' : ''}`}
-              onClick={() => setCurrentTab('phone')}
+              onClick={() => navigate('/bestelling-opnemen')}
             >
               <Phone size={16} style={{ marginRight: '8px' }} />
               Bestelling Opnemen
