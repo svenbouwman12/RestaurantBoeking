@@ -13,7 +13,7 @@ function AppContent() {
   // Update currentView based on the current route
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith('/owner') || path.startsWith('/dashboard') || path.startsWith('/menu-beheer') || path.startsWith('/tafel-beheer') || path.startsWith('/keuken') || path.startsWith('/bestelling-opnemen') || path.startsWith('/settings') || path.startsWith('/categories') || path.startsWith('/allergens') || path.startsWith('/menu-management')) {
+    if (path.startsWith('/owner') || path.startsWith('/dashboard') || path.startsWith('/menu-beheer') || path.startsWith('/tafel-beheer') || path.startsWith('/keuken') || path.startsWith('/bestelling-opnemen') || path.startsWith('/settings')) {
       setCurrentView('owner');
       document.body.classList.add('dashboard-active');
     } else if (path === '/menu') {
@@ -103,9 +103,8 @@ function AppContent() {
             <Route path="/keuken" element={<OwnerDashboard />} />
             <Route path="/bestelling-opnemen" element={<OwnerDashboard />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/categories" element={<Settings />} />
-            <Route path="/allergens" element={<Settings />} />
-            <Route path="/menu-management" element={<Settings />} />
+            <Route path="/settings/categories" element={<Settings />} />
+            <Route path="/settings/allergens" element={<Settings />} />
             {/* Fallback route */}
             <Route path="*" element={<CustomerReservation />} />
           </Routes>

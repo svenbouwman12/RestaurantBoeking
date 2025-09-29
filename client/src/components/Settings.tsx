@@ -14,7 +14,6 @@ import {
   X
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import MenuManagement from './MenuManagement';
 
 interface RestaurantSetting {
   id: string;
@@ -40,9 +39,8 @@ const Settings: React.FC = () => {
   // Determine current view from URL
   const getCurrentViewFromUrl = () => {
     const path = location.pathname;
-    if (path === '/categories') return 'categories';
-    if (path === '/allergens') return 'allergens';
-    if (path === '/menu-management') return 'menu';
+    if (path === '/settings/categories') return 'categories';
+    if (path === '/settings/allergens') return 'allergens';
     return 'settings';
   };
   
@@ -306,24 +304,17 @@ const Settings: React.FC = () => {
           </button>
           <button 
             className={`tab-button ${currentView === 'categories' ? 'active' : ''}`}
-            onClick={() => navigate('/categories')}
+            onClick={() => navigate('/settings/categories')}
           >
             <Tag size={16} style={{ marginRight: '8px' }} />
             Categorieën
           </button>
           <button 
             className={`tab-button ${currentView === 'allergens' ? 'active' : ''}`}
-            onClick={() => navigate('/allergens')}
+            onClick={() => navigate('/settings/allergens')}
           >
             <AlertTriangle size={16} style={{ marginRight: '8px' }} />
             Allergenen
-          </button>
-          <button 
-            className={`tab-button ${currentView === 'menu' ? 'active' : ''}`}
-            onClick={() => navigate('/menu-management')}
-          >
-            <Utensils size={16} style={{ marginRight: '8px' }} />
-            Menu Beheer
           </button>
         </div>
 
@@ -643,10 +634,6 @@ const Settings: React.FC = () => {
             </div>
           )}
 
-          {/* Menu Management Tab */}
-          {currentView === 'menu' && (
-            <MenuManagement />
-          )}
 
         </div>
       </div>
