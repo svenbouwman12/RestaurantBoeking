@@ -30,8 +30,6 @@ interface OpeningHours {
   closed: boolean;
 }
 
-type TabView = 'settings' | 'categories' | 'allergens' | 'menu';
-
 const Settings: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,15 +38,15 @@ const Settings: React.FC = () => {
   const [success, setSuccess] = useState<string>('');
   
   // Determine current view from URL
-  const getCurrentViewFromUrl = (): TabView => {
+  const getCurrentViewFromUrl = () => {
     const path = location.pathname;
-    if (path === '/settings/categories') return 'categories' as TabView;
-    if (path === '/settings/allergens') return 'allergens' as TabView;
-    if (path === '/settings/menu') return 'menu' as TabView;
-    return 'settings' as TabView;
+    if (path === '/settings/categories') return 'categories';
+    if (path === '/settings/allergens') return 'allergens';
+    if (path === '/settings/menu') return 'menu';
+    return 'settings';
   };
   
-  const [currentView, setCurrentView] = useState<TabView>('settings' as TabView);
+  const [currentView, setCurrentView] = useState<string>('settings');
   
   // Settings state
   const [openingHours, setOpeningHours] = useState<{[key: string]: OpeningHours}>({});
@@ -237,12 +235,12 @@ const Settings: React.FC = () => {
 
   // Update currentView when URL changes
   useEffect(() => {
-    setCurrentView(getCurrentViewFromUrl() as TabView);
+    setCurrentView(getCurrentViewFromUrl());
   }, [location.pathname]);
 
   // Initialize currentView on mount
   useEffect(() => {
-    setCurrentView(getCurrentViewFromUrl() as TabView);
+    setCurrentView(getCurrentViewFromUrl());
   }, []);
 
   useEffect(() => {
