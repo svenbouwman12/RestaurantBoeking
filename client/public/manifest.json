@@ -3,7 +3,7 @@
   "name": "Restaurant Table Reservation System",
   "icons": [
     {
-      "src": "zaytun-logo.svg",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'><text x='50' y='20' text-anchor='middle' font-family='Arial' font-size='16' font-weight='bold' fill='%23E5AD43'>ZAYTUN</text></svg>",
       "sizes": "any",
       "type": "image/svg+xml"
     }

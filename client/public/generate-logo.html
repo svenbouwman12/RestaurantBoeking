@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logo Generator</title>
+</head>
+<body>
+    <canvas id="canvas" width="200" height="60"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set background
+        ctx.fillStyle = 'transparent';
+        ctx.fillRect(0, 0, 200, 60);
+        
+        // Set text properties
+        ctx.fillStyle = '#db9c2c';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Draw text
+        ctx.fillText('ZAYTUN', 100, 30);
+        
+        // Convert to PNG
+        const dataURL = canvas.toDataURL('image/png');
+        console.log(dataURL);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = 'zaytun-logo.png';
+        link.href = dataURL;
+        link.click();
+    </script>
+</body>
+</html>
